@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Objectif Doomsday</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+
+/* Layout: comic-panel column. A red splash header with a countdown burst and a ring gauge, then inked panels of checkable rows on halftone paper. */
+:root{
+  --bg:#fbfaf6; --surface:#ffffff; --ink:#141414; --muted:#56565c; --edge:#141414; --shadow:#141414; --soft:#e4e2dd;
+  --red:#d42a2f; --yellow:#ffcc29; --on-red:#ffffff; --on-yellow:#141414; --done:#9b9ba1; --dots:rgba(212,42,47,.15);
+  --accent:var(--red);
+  --f-display:"Bangers",Impact,"Arial Narrow",sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101013; --surface:#1a1a1f; --ink:#f2f2f2; --muted:#a8a8b0; --edge:#000000; --shadow:#000000; --soft:#2b2b32;
+  --red:#e8353a; --yellow:#ffd23f; --done:#6e6e76; --dots:rgba(232,53,58,.16); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101013; --surface:#1a1a1f; --ink:#f2f2f2; --muted:#a8a8b0; --edge:#000000; --shadow:#000000; --soft:#2b2b32;
+  --red:#e8353a; --yellow:#ffd23f; --done:#6e6e76; --dots:rgba(232,53,58,.16); color-scheme:dark}
+body{margin:0;background-color:var(--bg);background-image:radial-gradient(var(--dots) 1.3px,transparent 1.8px);background-size:11px 11px;color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.wrap{max-width:780px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:24px}
+
+.plate{position:relative;overflow:hidden;background:var(--red);color:var(--on-red);border:3px solid var(--edge);border-radius:4px;box-shadow:6px 6px 0 var(--shadow);padding:20px 20px 18px;display:flex;flex-direction:column;gap:14px}
+.plate::before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 105% -10%,rgba(255,255,255,.11) 0deg 5deg,transparent 5deg 11deg);pointer-events:none}
+.plate::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,.22) 1.2px,transparent 1.7px);background-size:8px 8px;-webkit-mask-image:linear-gradient(to top,#000,transparent 65%);mask-image:linear-gradient(to top,#000,transparent 65%);pointer-events:none}
+.plate>*{position:relative;z-index:1}
+.eyebrow{font-family:var(--f-mono);font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin:0}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(48px,11vw,88px);line-height:.9;letter-spacing:.02em;text-transform:uppercase;margin:0;color:var(--yellow);-webkit-text-stroke:1.5px var(--edge);text-shadow:4px 4px 0 var(--edge);text-wrap:balance}
+
+.hud{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:18px}
+.burst{width:122px;height:122px;display:grid;place-content:center;text-align:center;background:var(--yellow);color:var(--on-yellow);clip-path:polygon(50% 0,61% 17%,82% 8%,80% 30%,100% 36%,86% 52%,100% 68%,79% 72%,82% 94%,61% 84%,50% 100%,39% 84%,18% 94%,21% 72%,0 68%,14% 52%,0 36%,20% 30%,18% 8%,39% 17%);transform:rotate(-6deg)}
+.burst b{font-family:var(--f-display);font-weight:400;font-size:36px;line-height:1;letter-spacing:.02em}
+.burst span{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.gauge{width:116px;height:116px;display:block}
+.g-track{fill:none;stroke:rgba(0,0,0,.28);stroke-width:13}
+.g-fill{fill:none;stroke:var(--yellow);stroke-width:13;transition:stroke-dashoffset .4s}
+.g-num{font-family:var(--f-display);font-size:32px;fill:var(--on-red);text-anchor:middle}
+.g-lab{font-family:var(--f-body);font-size:9.5px;font-weight:600;letter-spacing:.08em;fill:var(--on-red);text-anchor:middle}
+.nums{display:grid;gap:7px;min-width:0}
+.nums div{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding-bottom:6px;border-bottom:2px dashed rgba(255,255,255,.35)}
+.nums div:last-child{border-bottom:0;padding-bottom:0}
+.nums b{font-family:var(--f-mono);font-weight:500;font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.nums span{font-size:12.5px}
+@media (max-width:560px){.hud{grid-template-columns:auto auto;justify-content:start}.nums{grid-column:1/-1}}
+
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:500;background:var(--surface);border:2px solid var(--edge);border-radius:3px;padding:5px 10px}
+.toggle input{width:18px;height:18px;accent-color:var(--red)}
+.status{font-family:var(--f-mono);font-size:12px;color:var(--muted);min-height:1em}
+.status.ok{color:var(--ink);font-weight:500}
+
+.phase{display:flex;align-items:center;gap:12px;margin:12px 0 -6px}
+.phase h2{font-family:var(--f-display);font-weight:400;font-size:36px;letter-spacing:.03em;text-transform:uppercase;margin:0;color:var(--ink)}
+.phase p{margin:0;color:var(--muted);font-size:13px}
+.phase::after{content:"";flex:1;height:5px;background:var(--red);transform:skewX(-20deg)}
+
+.block{background:var(--surface);border:3px solid var(--edge);border-radius:4px;box-shadow:5px 5px 0 var(--shadow);overflow:hidden}
+.block header{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 14px 12px;background:var(--edge);color:var(--on-red)}
+.block h3{font-family:var(--f-display);font-weight:400;font-size:27px;letter-spacing:.04em;text-transform:uppercase;margin:0;flex:1;min-width:0;color:var(--yellow)}
+.block .meta{font-family:var(--f-mono);font-size:12px;font-variant-numeric:tabular-nums;opacity:.85}
+.block .bnote{flex-basis:100%;margin:0;font-size:12.5px;opacity:.78}
+.segs{flex-basis:100%;display:flex;flex-wrap:wrap;gap:4px;padding-top:2px}
+.segs i{flex:1 1 10px;min-width:8px;max-width:30px;height:9px;background:rgba(255,255,255,.18);transform:skewX(-18deg)}
+.segs i.on{background:var(--red)}
+.block.complete header{background:var(--red)}
+.block.complete h3{color:var(--yellow);-webkit-text-stroke:1px var(--edge)}
+.block.complete .segs i.on{background:var(--yellow)}
+
+ul{list-style:none;margin:0;padding:0}
+li+li{border-top:1px solid var(--soft)}
+.row{display:grid;grid-template-columns:24px minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:10px 14px;cursor:pointer}
+.row:hover{background:color-mix(in srgb,var(--yellow) 16%,transparent)}
+.row input{position:absolute;opacity:0;width:1px;height:1px}
+.box{width:22px;height:22px;border:3px solid var(--ink);border-radius:3px;display:grid;place-items:center;background:var(--surface);transition:background .15s,transform .15s}
+.box::after{content:"";width:10px;height:5px;border-left:3px solid var(--on-red);border-bottom:3px solid var(--on-red);transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+.row input:checked+.box{background:var(--red);transform:rotate(-6deg)}
+.row input:checked+.box::after{opacity:1}
+.row input:focus-visible+.box{outline:3px solid var(--yellow);outline-offset:2px}
+.name{min-width:0;overflow-wrap:anywhere;font-weight:500}
+.name small{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.kind{font-family:var(--f-display);font-size:15px;line-height:1.3;letter-spacing:.06em;text-transform:uppercase;color:var(--on-yellow);background:var(--yellow);border:2px solid var(--edge);border-radius:3px;padding:0 7px;transform:rotate(-3deg)}
+.kind.serie{background:var(--surface);color:var(--ink);border-color:var(--ink);transform:rotate(2deg)}
+.dur{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;min-width:4.6em}
+li.done .name{color:var(--done);text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px}
+li.done .kind{opacity:.45}
+
+.cinema{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--yellow);color:var(--on-yellow);border:3px solid var(--edge);border-radius:4px;box-shadow:6px 6px 0 var(--red);padding:16px 18px;transform:rotate(-1deg);margin-block:8px}
+.cinema strong{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,6vw,40px);line-height:1;letter-spacing:.03em;text-transform:uppercase;color:var(--red);-webkit-text-stroke:1px var(--edge)}
+.cinema span{font-family:var(--f-mono);font-size:13px;font-weight:500}
+
+.transfer{background:var(--surface);border:3px solid var(--edge);border-radius:4px;box-shadow:5px 5px 0 var(--shadow);padding:12px 14px}
+.transfer summary{cursor:pointer;font-weight:600}
+.transfer p{color:var(--muted);font-size:13px;margin:10px 0}
+.transfer textarea{width:100%;font-family:var(--f-mono);font-size:12px;background:var(--bg);color:var(--ink);border:2px solid var(--edge);border-radius:3px;padding:8px;resize:vertical}
+.tbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tbtns button{font-family:var(--f-display);font-size:18px;letter-spacing:.05em;padding:4px 14px;border-radius:3px;border:2px solid var(--edge);background:var(--red);color:var(--on-red);cursor:pointer;box-shadow:3px 3px 0 var(--edge)}
+.tbtns button+button{background:var(--surface);color:var(--ink)}
+.tbtns button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--edge)}
+.tbtns button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+.tabs{display:flex;flex-wrap:wrap}
+.tabs button{flex:1 1 auto;font-family:var(--f-display);font-size:22px;letter-spacing:.04em;text-transform:uppercase;padding:8px 16px;background:var(--surface);color:var(--ink);border:3px solid var(--edge);cursor:pointer}
+.tabs button+button{margin-left:-3px}
+.tabs button[aria-selected="true"]{background:var(--yellow);color:var(--on-yellow);box-shadow:inset 0 -6px 0 var(--red)}
+.tabs button:focus-visible{outline:3px solid var(--red);outline-offset:2px;position:relative;z-index:1}
+.intro{margin:0;color:var(--muted);font-size:14px;max-width:62ch}
+.block.year h3{font-size:34px}
+@media (max-width:560px){.block h3{flex-basis:100%}}
+@media (max-width:420px){.kind{display:none}.row{grid-template-columns:24px minmax(0,1fr) auto}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main id="app" class="wrap"><noscript>Active JavaScript pour utiliser la liste.</noscript></main>
+<script>
+(function(){
+  var CINEMA = new Date(2026, 11, 16);
+  var BLOCKS = [
+    {id:"nyc", name:"2015-2018 · New York", note:"Les séries Netflix se passent avant Infinity War.", phase:"avant", items:[
+      ["dd1","Daredevil S1","Série",689],
+      ["dd2","Daredevil S2","Série",689],
+      ["dd3","Daredevil S3","Série",754,"Commence juste après The Defenders : un résumé suffit"]]},
+    {id:"post", name:"2023-2024 · Après Endgame", phase:"avant", items:[
+      ["fws","The Falcon and the Winter Soldier","Série",300],
+      ["shangchi","Shang-Chi","Film",132],
+      ["eternals","Eternals","Film",156]]},
+    {id:"spv", name:"Les autres Spider-Man", note:"Autres univers, à voir avant No Way Home.", phase:"avant", items:[
+      ["sm1","Spider-Man (2002)","Film",121],
+      ["sm2","Spider-Man 2 (2004)","Film",127],
+      ["sm3","Spider-Man 3 (2007)","Film",139],
+      ["asm1","The Amazing Spider-Man (2012)","Film",136],
+      ["asm2","The Amazing Spider-Man 2 (2014)","Film",142],
+      ["yfns","Your Friendly Neighborhood Spider-Man","Série",250,"Univers à part, facultatif pour la suite"]]},
+    {id:"y24", name:"2024", phase:"avant", items:[
+      ["ffh","Spider-Man: Far From Home","Film",129],
+      ["nwh","Spider-Man: No Way Home","Film",148],
+      ["ds2","Doctor Strange in the Multiverse of Madness","Film",126],
+      ["hawkeye","Hawkeye","Série",312]]},
+    {id:"fox", name:"Univers Fox", note:"X-Men et Deadpool de la Fox, à voir avant Deadpool & Wolverine.", phase:"avant", items:[
+      ["xm1","X-Men (2000)","Film",104],
+      ["xm2","X2","Film",134],
+      ["xm3","X-Men: The Last Stand","Film",104],
+      ["xmo","X-Men Origins: Wolverine","Film",107],
+      ["xmfc","X-Men: First Class","Film",132],
+      ["wolv","The Wolverine","Film",126],
+      ["dofp","X-Men: Days of Future Past","Film",132],
+      ["apoc","X-Men: Apocalypse","Film",144],
+      ["dphx","Dark Phoenix","Film",114],
+      ["nmut","The New Mutants","Film",94],
+      ["logan","Logan","Film",137],
+      ["dp1","Deadpool","Film",108],
+      ["dp2","Deadpool 2","Film",119]]},
+    {id:"y25", name:"2024-2025", phase:"avant", items:[
+      ["dpw","Deadpool & Wolverine","Film",128],
+      ["shehulk","She-Hulk","Série",297],
+      ["msm","Ms. Marvel","Série",270],
+      ["thor4","Thor: Love and Thunder","Film",119],
+      ["wf","Black Panther: Wakanda Forever","Film",161],
+      ["wbn","Werewolf by Night","Film",53],
+      ["ghs","Guardians Holiday Special","Film",44],
+      ["quantum","Ant-Man: Quantumania","Film",125],
+      ["gotg3","Guardians of the Galaxy Vol. 3","Film",150],
+      ["sinv","Secret Invasion","Série",300],
+      ["marvels","The Marvels","Film",105],
+      ["echo","Echo","Série",225],
+      ["ironheart","Ironheart","Série",270],
+      ["agatha","Agatha All Along","Série",360],
+      ["vq","VisionQuest","Série",360,"Facultatif pour Doomsday"]]},
+    {id:"y27", name:"2026-2027", phase:"avant", items:[
+      ["ba1","Daredevil: Born Again S1","Série",450],
+      ["bnw","Captain America: Brave New World","Film",118],
+      ["tbolts","Thunderbolts*","Film",127],
+      ["wonder","Wonder Man","Série",240],
+      ["ba2","Daredevil: Born Again S2","Série",400],
+      ["olk","The Punisher: One Last Kill","Film",60],
+      ["bnd","Spider-Man: Brand New Day","Film",120,"Pas sur Disney+"]]},
+    {id:"e828", name:"Les 4 Fantastiques", note:"Les trois films de la Fox, puis Terre-828, qui mène directement à Doomsday.", phase:"avant", items:[
+      ["ff05","Les 4 Fantastiques (2005)","Film",106],
+      ["ff07","Les 4 Fantastiques et le Surfer d'argent (2007)","Film",92],
+      ["ff15","Les 4 Fantastiques (2015)","Film",100],
+      ["fffs","Fantastic Four: First Steps","Film",115,"Terre-828"]]},
+    {id:"nf", name:"Netflix · 2015-2019", phase:"apres", items:[
+      ["jj1","Jessica Jones S1","Série",676],
+      ["lc1","Luke Cage S1","Série",715],
+      ["if1","Iron Fist S1","Série",715],
+      ["def","The Defenders","Série",400],
+      ["pu1","The Punisher S1","Série",689],
+      ["jj2","Jessica Jones S2","Série",676],
+      ["lc2","Luke Cage S2","Série",715],
+      ["if2","Iron Fist S2","Série",520],
+      ["pu2","The Punisher S2","Série",689],
+      ["jj3","Jessica Jones S3","Série",676]]},
+    {id:"wi", name:"What If...?", note:"Univers alternatifs, sans place dans la chronologie.", phase:"apres", items:[
+      ["wi2","What If...? S2","Série",288],
+      ["wi3","What If...? S3","Série",240]]},
+    {id:"sony", name:"Univers Sony", phase:"apres", items:[
+      ["mweb","Madame Web","Film",116,"Pas sur Disney+"],
+      ["ven1","Venom","Film",112,"Pas sur Disney+"],
+      ["ven2","Venom: Let There Be Carnage","Film",97,"Pas sur Disney+"],
+      ["morb","Morbius","Film",104,"Pas sur Disney+"],
+      ["krav","Kraven the Hunter","Film",127,"Pas sur Disney+"],
+      ["ven3","Venom: The Last Dance","Film",109,"Pas sur Disney+"]]},
+    {id:"sv", name:"Spider-Verse", note:"Films d'animation, univers à part.", phase:"apres", items:[
+      ["itsv","Into the Spider-Verse","Film",117],
+      ["atsv","Across the Spider-Verse","Film",140,"Pas sur Disney+"],
+      ["noir","Spider-Noir","Série",400,"Pas sur Disney+"]]},
+    {id:"courts", name:"Courts-métrages", note:"Petits bonus du MCU, sans impact sur l'histoire principale.", phase:"apres", items:[
+      ["os1","The Consultant","Court",4,"Marvel One-Shot"],
+      ["os2","A Funny Thing Happened on the Way to Thor's Hammer","Court",4,"Marvel One-Shot"],
+      ["os3","Item 47","Court",12,"Marvel One-Shot"],
+      ["os4","Agent Carter (court-métrage)","Court",15,"Marvel One-Shot"],
+      ["os5","All Hail the King","Court",14,"Marvel One-Shot"],
+      ["tthor","Team Thor","Court",13,"3 courts humoristiques, pas sur Disney+"],
+      ["groot1","I Am Groot S1","Court",18],
+      ["groot2","I Am Groot S2","Court",20]]},
+    {id:"mtv", name:"Marvel Television · 2013-2020", note:"Séries ABC, Hulu et Freeform pensées pour le MCU, mais que les films n'ont jamais reprises.", phase:"apres", items:[
+      ["aos1","Agents of S.H.I.E.L.D. S1","Série",946],
+      ["aos2","Agents of S.H.I.E.L.D. S2","Série",946],
+      ["ac1","Agent Carter S1","Série",336],
+      ["aos3","Agents of S.H.I.E.L.D. S3","Série",946],
+      ["ac2","Agent Carter S2","Série",420],
+      ["aos4","Agents of S.H.I.E.L.D. S4","Série",946],
+      ["inh","Inhumans","Série",344],
+      ["run1","Runaways S1","Série",500],
+      ["aos5","Agents of S.H.I.E.L.D. S5","Série",946],
+      ["cd1","Cloak & Dagger S1","Série",430],
+      ["run2","Runaways S2","Série",650],
+      ["cd2","Cloak & Dagger S2","Série",430],
+      ["aos6","Agents of S.H.I.E.L.D. S6","Série",559],
+      ["aos7","Agents of S.H.I.E.L.D. S7","Série",559],
+      ["run3","Runaways S3","Série",450,"Crossover avec Cloak & Dagger"],
+      ["helst","Helstrom","Série",450,"Lien au MCU jamais confirmé"]]},
+    {id:"autres", name:"Autres films Marvel", note:"Personnages revus dans Deadpool & Wolverine.", phase:"apres", items:[
+      ["blade1","Blade (1998)","Film",120,"Ce Blade revient dans Deadpool & Wolverine · pas sur Disney+"],
+      ["blade2","Blade II (2002)","Film",117,"Pas sur Disney+"],
+      ["blade3","Blade: Trinity (2004)","Film",113,"Pas sur Disney+"],
+      ["dd03","Daredevil (2003)","Film",103,"Cette Elektra revient dans Deadpool & Wolverine"],
+      ["elek","Elektra (2005)","Film",97]]},
+    {id:"anim", name:"Animation Marvel Studios", phase:"apres", items:[
+      ["xm97","X-Men '97 S1","Série",300,"Suite de la série animée des années 90"],
+      ["xm972","X-Men '97 S2","Série",270],
+      ["eow","Eyes of Wakanda","Série",115],
+      ["mz","Marvel Zombies","Série",140,"Suite d'un épisode de What If...?"]]},
+    {id:"old", name:"Déjà sortis avant ta liste", phase:"ancien", items:[
+      ["im1","Iron Man","Film",126],
+      ["hulk","L'Incroyable Hulk","Film",112],
+      ["im2","Iron Man 2","Film",124],
+      ["thor1","Thor","Film",115],
+      ["cap1","Captain America: First Avenger","Film",124],
+      ["avg1","Avengers","Film",143],
+      ["im3","Iron Man 3","Film",130],
+      ["thor2","Thor: Le Monde des ténèbres","Film",112],
+      ["cap2","Captain America: Le Soldat de l'hiver","Film",136],
+      ["gotg1","Les Gardiens de la Galaxie","Film",121],
+      ["aou","Avengers: L'Ère d'Ultron","Film",141],
+      ["antman","Ant-Man","Film",117],
+      ["cw","Captain America: Civil War","Film",147],
+      ["drs","Doctor Strange","Film",115],
+      ["gotg2","Les Gardiens de la Galaxie Vol. 2","Film",136],
+      ["hc","Spider-Man: Homecoming","Film",133],
+      ["rag","Thor: Ragnarok","Film",130],
+      ["bp","Black Panther","Film",134],
+      ["iw","Avengers: Infinity War","Film",149],
+      ["amw","Ant-Man et la Guêpe","Film",118],
+      ["cm","Captain Marvel","Film",123],
+      ["endg","Avengers: Endgame","Film",181],
+      ["wv","WandaVision","Série",350],
+      ["loki1","Loki S1","Série",300],
+      ["bw","Black Widow","Film",134],
+      ["wi1","What If...? S1","Série",288],
+      ["mk","Moon Knight","Série",280],
+      ["loki2","Loki S2","Série",300]]}
+  ];
+  var EPISODES = {wv:9,loki1:6,loki2:6,wi1:9,mk:6,dd1:13,dd2:13,dd3:13,fws:6,yfns:10,hawkeye:6,shehulk:9,msm:6,sinv:6,echo:5,ironheart:6,agatha:9,vq:8,ba1:9,wonder:8,ba2:8,jj1:13,lc1:13,if1:13,def:8,pu1:13,jj2:13,lc2:13,if2:10,pu2:13,jj3:13,wi2:9,wi3:8,
+    noir:8,groot1:5,groot2:5,aos1:22,aos2:22,aos3:22,aos4:22,aos5:22,aos6:13,aos7:13,ac1:8,ac2:10,inh:8,run1:10,run2:13,run3:10,cd1:10,cd2:10,helst:10,
+    xm97:10,xm972:9,eow:4,mz:4};
+  var RELEASE = {im1:"2008-05",hulk:"2008-06",xm1:"2000-07",sm1:"2002-05",xm2:"2003-05",sm2:"2004-06",ff05:"2005-07",xm3:"2006-05",sm3:"2007-05",ff07:"2007-06",
+    xmo:"2009-05",im2:"2010-05",thor1:"2011-05",xmfc:"2011-06",cap1:"2011-07",avg1:"2012-05",asm1:"2012-07",im3:"2013-05",wolv:"2013-07",thor2:"2013-11",
+    cap2:"2014-04",asm2:"2014-04",dofp:"2014-05",gotg1:"2014-08",dd1:"2015-04",aou:"2015-05",antman:"2015-07",ff15:"2015-08",jj1:"2015-11",
+    dp1:"2016-02",dd2:"2016-03",cw:"2016-05",apoc:"2016-05",lc1:"2016-09",drs:"2016-11",logan:"2017-03",if1:"2017-03",gotg2:"2017-05",hc:"2017-07",def:"2017-08",rag:"2017-11",pu1:"2017-11",
+    bp:"2018-02",jj2:"2018-03",iw:"2018-04",dp2:"2018-05",lc2:"2018-06",amw:"2018-07",if2:"2018-09",dd3:"2018-10",ven1:"2018-10",itsv:"2018-12",
+    pu2:"2019-01",cm:"2019-03",endg:"2019-04",dphx:"2019-06",jj3:"2019-06",ffh:"2019-07",nmut:"2020-08",
+    wv:"2021-01",fws:"2021-03",loki1:"2021-06",bw:"2021-07",wi1:"2021-08",shangchi:"2021-09",ven2:"2021-10",eternals:"2021-11",hawkeye:"2021-11",nwh:"2021-12",
+    mk:"2022-03",morb:"2022-04",ds2:"2022-05",msm:"2022-06",thor4:"2022-07",shehulk:"2022-08",wbn:"2022-10",wf:"2022-11",ghs:"2022-11",
+    quantum:"2023-02",gotg3:"2023-05",atsv:"2023-06",sinv:"2023-06",loki2:"2023-10",marvels:"2023-11",wi2:"2023-12",
+    echo:"2024-01",mweb:"2024-02",dpw:"2024-07",agatha:"2024-09",ven3:"2024-10",wi3:"2024-12",krav:"2024-12",
+    yfns:"2025-01",bnw:"2025-02",ba1:"2025-03",tbolts:"2025-05",ironheart:"2025-06",fffs:"2025-07",
+    wonder:"2026-01",ba2:"2026-03",olk:"2026-05",bnd:"2026-07",vq:"2026-10",
+    blade1:"1998-08",blade2:"2002-03",dd03:"2003-02",blade3:"2004-12",elek:"2005-01",
+    os1:"2011-09",os2:"2011-10",os3:"2012-09",os4:"2013-09",os5:"2014-02",tthor:"2016-08",groot1:"2022-08",groot2:"2023-09",
+    aos1:"2013-09",aos2:"2014-09",ac1:"2015-01",aos3:"2015-09",ac2:"2016-01",aos4:"2016-09",inh:"2017-09",run1:"2017-11",aos5:"2017-12",
+    cd1:"2018-06",run2:"2018-12",cd2:"2019-04",aos6:"2019-05",run3:"2019-12",aos7:"2020-05",helst:"2020-10",
+    xm97:"2024-03",eow:"2025-08",mz:"2025-09",noir:"2026-05",xm972:"2026-07"};
+  var CHRONO = [
+    ["Avant 1900", ["eow"], "Eyes of Wakanda suit des guerriers wakandais, de l'Antiquité à 1896."],
+    ["1943", ["cap1"], "Seconde Guerre mondiale."],
+    ["1946", ["os4","ac1"]],
+    ["1947", ["ac2"]],
+    ["1962", ["xmfc"]],
+    ["1973", ["dofp"], "Days of Future Past se passe surtout en 1973, avec un futur sombre en 2023."],
+    ["1979", ["xmo"]],
+    ["1983", ["apoc"]],
+    ["1992", ["dphx"]],
+    ["1995", ["cm"]],
+    ["1998", ["blade1"]],
+    ["2000", ["xm1","blade2"]],
+    ["2002", ["sm1"]],
+    ["2003", ["xm2","mweb","dd03"]],
+    ["2004", ["sm2","blade3"]],
+    ["2005", ["ff05","elek"]],
+    ["2006", ["xm3"]],
+    ["2007", ["sm3","ff07"]],
+    ["2010", ["im1"]],
+    ["2011", ["im2","hulk","os1","thor1","os2"]],
+    ["2012", ["avg1","os3","im3","asm1"]],
+    ["2013", ["thor2","os5","aos1","wolv"]],
+    ["2014", ["cap2","gotg1","groot1","groot2","gotg2","asm2","aos2"]],
+    ["2015", ["aou","antman","dd1","jj1","ff15","aos3"]],
+    ["2016", ["cw","tthor","bw","bp","hc","drs","dd2","lc1","if1","dp1","aos4"]],
+    ["2017", ["rag","def","pu1","jj2","nmut","inh","run1"]],
+    ["2018", ["amw","iw","lc2","if2","dd3","pu2","jj3","dp2","ven1","itsv","aos5","cd1","run2"]],
+    ["2019", ["aos6","aos7","cd2","run3"], "Agents of S.H.I.E.L.D. ignore le claquement de Thanos et part dans sa propre direction."],
+    ["2020", ["helst"]],
+    ["2021", ["ven2"]],
+    ["2022", ["morb"]],
+    ["2023", ["endg","wv","atsv"], "Endgame commence en 2018 et se termine en 2023, après cinq ans d'ellipse."],
+    ["2024", ["fws","ffh","shangchi","eternals","nwh","ds2","hawkeye","dpw","krav","ven3"], "Après le retour des disparus d'Endgame."],
+    ["2025", ["mk","shehulk","msm","thor4","wf","ironheart","wbn","ghs","quantum","gotg3","sinv","marvels","echo","agatha"]],
+    ["2026", ["vq","ba1"], "À partir d'ici, les années sont approximatives : Marvel ne les précise pas toujours."],
+    ["2027", ["bnw","tbolts","wonder","ba2","olk","bnd"]],
+    ["2028", ["fffs"], "Les 4 Fantastiques de Terre-828 arrivent dans le MCU environ 14 mois après Thunderbolts*."],
+    ["2029", ["logan"], "Logan se passe dans un futur de l'univers Fox."],
+    ["Hors chronologie", ["loki1","loki2","wi1","wi2","wi3","mz","yfns","xm97","xm972","noir"], "La TVA hors du temps, les univers alternatifs et les histoires du multivers."]
+  ];
+  var UNIV = {xmfc:"Fox",dofp:"Fox",xmo:"Fox",apoc:"Fox",dphx:"Fox",xm1:"Fox",xm2:"Fox",xm3:"Fox",wolv:"Fox",nmut:"Fox",logan:"Fox",dp1:"Fox",dp2:"Fox",ff05:"Fox",ff07:"Fox",ff15:"Fox",
+    sm1:"Sam Raimi",sm2:"Sam Raimi",sm3:"Sam Raimi",asm1:"Marc Webb",asm2:"Marc Webb",
+    mweb:"Sony",ven1:"Sony",ven2:"Sony",morb:"Sony",krav:"Sony",ven3:"Sony",itsv:"Spider-Verse",atsv:"Spider-Verse",
+    dd1:"Netflix",dd2:"Netflix",dd3:"Netflix",jj1:"Netflix",jj2:"Netflix",jj3:"Netflix",lc1:"Netflix",lc2:"Netflix",if1:"Netflix",if2:"Netflix",def:"Netflix",pu1:"Netflix",pu2:"Netflix",
+    fffs:"Terre-828",yfns:"Autre univers",wi2:"Multivers",wi3:"Multivers",
+    noir:"Sony",blade1:"New Line",blade2:"New Line",blade3:"New Line",dd03:"Fox",elek:"Fox",xm97:"Autre univers",xm972:"Autre univers",mz:"Multivers",
+    aos1:"ABC",aos2:"ABC",aos3:"ABC",aos4:"ABC",aos5:"ABC",aos6:"ABC",aos7:"ABC",ac1:"ABC",ac2:"ABC",inh:"ABC",
+    run1:"Hulu",run2:"Hulu",run3:"Hulu",helst:"Hulu",cd1:"Freeform",cd2:"Freeform"};
+  var ITEM = {}, PHASE = {}; BLOCKS.forEach(function(b){ b.items.forEach(function(it){ ITEM[it[0]] = it; PHASE[it[0]] = b.phase; }); });
+  var VIEW = (function(){ var v = null; try { v = localStorage.getItem("objectif-doomsday:view"); } catch (e) {} return v === "chrono" ? "chrono" : "sortie"; })();
+  function univ(id){ return UNIV[id] || "MCU"; }
+  var EXTRA = '<details class="transfer"><summary>Transférer mes coches vers un autre appareil</summary><p>Les coches sont gardées dans ce navigateur. Pour les retrouver sur ton téléphone ou un autre ordi, copie ton code ici, colle-le là-bas, puis clique sur « Importer ce code ».</p><textarea id="transfer-code" rows="3" spellcheck="false" aria-label="Code de progression"></textarea><div class="tbtns"><button type="button" id="copy-code">Copier mon code</button><button type="button" id="apply-code">Importer ce code</button></div><p class="status" id="transfer-msg" aria-live="polite"></p></details>';
+
+
+  var KEY = "objectif-doomsday:done", HIDE = "objectif-doomsday:hide";
+  var DEFAULT_DONE = ["fws","shangchi","eternals","hawkeye","bnw","loki1","loki2","wi1"];
+  var ALL_IDS = {}; BLOCKS.forEach(function(b){ b.items.forEach(function(it){ ALL_IDS[it[0]] = true; }); });
+  function lsGet(k){ try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k,v){ try { localStorage.setItem(k,v); return true; } catch (e) { return false; } }
+  var storageOk = lsSet("objectif-doomsday:test","1");
+  var done;
+  try { var saved = lsGet(KEY); done = new Set(saved ? JSON.parse(saved) : DEFAULT_DONE); } catch (e) { done = new Set(DEFAULT_DONE); }
+  var hideSeen = lsGet(HIDE) === "1";
+  var app = document.getElementById("app");
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  function fmt(min){
+    if (min <= 0) return "0 h";
+    var h = Math.floor(min/60), m = Math.round(min%60);
+    if (h === 0) return m + " min";
+    return h + " h" + (m ? " " + (m < 10 ? "0" : "") + m : "");
+  }
+  function daysLeft(){
+    var now = new Date(); var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.round((CINEMA - today) / 86400000);
+  }
+  function sums(items){
+    var total = 0, left = 0, n = 0;
+    items.forEach(function(it){ total += it[3]; if (done.has(it[0])) n++; else left += it[3]; });
+    return {total: total, left: left, n: n, count: items.length};
+  }
+  function beforeItems(){ var a = []; BLOCKS.forEach(function(b){ if (b.phase === "avant") a = a.concat(b.items); }); return a; }
+
+  function statsHTML(){
+    var s = sums(beforeItems()), d = daysLeft();
+    var pct = s.count ? Math.round(s.n / s.count * 100) : 0;
+    var pace = d > 0 ? fmt(Math.ceil(s.left / d)) : "—";
+    var C = 2 * Math.PI * 50, off = C * (1 - pct / 100);
+    return '<div class="hud">' +
+      '<div class="burst"><b>' + (d > 0 ? "J-" + d : (d === 0 ? "Jour J" : "Vu !")) + '</b><span>avant le ciné</span></div>' +
+      '<svg class="gauge" viewBox="0 0 120 120" role="img" aria-label="' + pct + ' % vu avant Doomsday">' +
+        '<circle class="g-track" cx="60" cy="60" r="50"></circle>' +
+        '<circle class="g-fill" cx="60" cy="60" r="50" transform="rotate(-90 60 60)" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"></circle>' +
+        '<text class="g-num" x="60" y="64">' + pct + '%</text><text class="g-lab" x="60" y="82">VU</text></svg>' +
+      '<div class="nums">' +
+        '<div><b>' + s.n + "/" + s.count + '</b><span>vus avant Doomsday</span></div>' +
+        '<div><b>' + fmt(s.left) + '</b><span>restantes</span></div>' +
+        '<div><b>' + pace + '</b><span>par jour à tenir</span></div>' +
+      '</div></div>';
+  }
+  function subline(it, withUniv){
+    var parts = [];
+    if (withUniv) parts.push(univ(it[0]));
+    if (EPISODES[it[0]]) parts.push(EPISODES[it[0]] + " épisodes");
+    if (it[4]) parts.push(it[4]);
+    if (PHASE[it[0]] === "apres") parts.push("prévu après Doomsday");
+    return parts.length ? "<small>" + esc(parts.join(" · ")) + "</small>" : "";
+  }
+  function meta(items){
+    var s = sums(items);
+    return s.n + "/" + s.count + (s.left ? " · " + fmt(s.left) + " restantes" : " · terminé");
+  }
+  function rowHTML(it, withUniv){
+    var isDone = done.has(it[0]);
+    return '<li class="' + (isDone ? "done" : "") + '"' + (isDone && hideSeen ? " hidden" : "") + ' data-row="' + it[0] + '">' +
+      '<label class="row" for="c-' + it[0] + '"><input type="checkbox" id="c-' + it[0] + '" data-id="' + it[0] + '"' + (isDone ? " checked" : "") + '>' +
+      '<span class="box" aria-hidden="true"></span>' +
+      '<span class="name">' + esc(it[1]) + subline(it, withUniv) + "</span>" +
+      '<span class="kind' + (it[2] === "Série" ? " serie" : "") + '">' + it[2] + '</span><span class="dur">' + fmt(it[3]) + "</span></label></li>";
+  }
+  function sectionHTML(name, note, items, withUniv, cls){
+    var s = sums(items);
+    return '<section class="block' + (cls ? " " + cls : "") + (s.n === s.count ? " complete" : "") + '" data-ids="' + items.map(function(it){ return it[0]; }).join(",") + '"><header><h3>' + esc(name) + '</h3><span class="meta">' + meta(items) + '</span>' +
+      (note ? '<p class="bnote">' + esc(note) + '</p>' : '') +
+      '<span class="segs" aria-hidden="true">' + items.map(function(it){ return '<i' + (done.has(it[0]) ? ' class="on"' : '') + '></i>'; }).join("") + '</span></header><ul>' +
+      items.map(function(it){ return rowHTML(it, withUniv); }).join("") + "</ul></section>";
+  }
+  function planHTML(){
+    var html = '<div class="phase"><h2>Avant Doomsday</h2></div>';
+    BLOCKS.forEach(function(b){ if (b.phase === "avant") html += sectionHTML(b.name, b.note, b.items, false); });
+    html += '<div class="cinema"><strong>Avengers: Doomsday</strong><span>16/12 · au cinéma</span></div>';
+    html += '<div class="phase"><h2>Après</h2><p>pour Secret Wars</p></div>';
+    BLOCKS.forEach(function(b){ if (b.phase === "apres") html += sectionHTML(b.name, b.note, b.items, false); });
+    return html;
+  }
+  function sortieHTML(){
+    var html = '<p class="intro">Tout, dans l’ordre de sortie au cinéma ou en streaming, tous univers confondus. Les coches sont les mêmes que dans l’autre onglet.</p>';
+    var ids = Object.keys(ITEM).filter(function(id){ return RELEASE[id]; }).sort(function(a, b){ return RELEASE[a] < RELEASE[b] ? -1 : RELEASE[a] > RELEASE[b] ? 1 : 0; });
+    var byYear = {}, years = [];
+    ids.forEach(function(id){ var y = RELEASE[id].slice(0, 4); if (!byYear[y]) { byYear[y] = []; years.push(y); } byYear[y].push(ITEM[id]); });
+    years.forEach(function(y){ html += sectionHTML(y, null, byYear[y], true, "year"); });
+    html += '<div class="cinema"><strong>Avengers: Doomsday</strong><span>16/12/2026 · au cinéma</span></div>';
+    return html;
+  }
+  function chronoHTML(){
+    var html = '<p class="intro">Tout, rangé selon l’année où se passe l’histoire, tous univers confondus. Les coches sont les mêmes que dans l’autre onglet.</p>';
+    CHRONO.forEach(function(g){
+      var items = g[1].map(function(id){ return ITEM[id]; }).filter(Boolean);
+      if (!items.length) return;
+      if (g[0] === "Hors chronologie") html += '<div class="cinema"><strong>Avengers: Doomsday</strong><span>16/12/2026 · au cinéma</span></div>';
+      html += sectionHTML(g[0], g[2], items, true, "year");
+    });
+    return html;
+  }
+  function render(){
+    var html = '<section class="plate"><p class="eyebrow">Cinéma · mercredi 16 décembre</p><h1>Objectif Doomsday</h1><div id="stats">' + statsHTML() + "</div></section>" +
+      '<div class="tabs" role="tablist" aria-label="Affichage de la liste">' +
+        '<button type="button" role="tab" id="tab-sortie" data-view="sortie" aria-selected="' + (VIEW === "sortie") + '">Ordre de sortie</button>' +
+        '<button type="button" role="tab" id="tab-chrono" data-view="chrono" aria-selected="' + (VIEW === "chrono") + '">Chronologie des événements</button>' +
+      '</div>' +
+      '<div class="toolbar"><label class="toggle" for="hide-seen"><input type="checkbox" id="hide-seen"' + (hideSeen ? " checked" : "") + '> Masquer ce qui est vu</label><span class="status" id="status" aria-live="polite"></span></div>' +
+      (VIEW === "chrono" ? chronoHTML() : sortieHTML()) + EXTRA;
+    app.innerHTML = html;
+  }
+  function refresh(id){
+    var li = app.querySelector('[data-row="' + id + '"]');
+    if (li) li.classList.toggle("done", done.has(id));
+    document.getElementById("stats").innerHTML = statsHTML();
+    Array.prototype.forEach.call(app.querySelectorAll("section.block[data-ids]"), function(sec){
+      var items = sec.getAttribute("data-ids").split(",").map(function(k){ return ITEM[k]; });
+      var s = sums(items);
+      sec.querySelector(".meta").textContent = meta(items);
+      var segs = sec.querySelectorAll(".segs i");
+      items.forEach(function(it, k){ if (segs[k]) segs[k].classList.toggle("on", done.has(it[0])); });
+      sec.classList.toggle("complete", s.n === s.count);
+    });
+  }
+  function setStatus(kind){
+    var el = document.getElementById("status"); if (!el) return;
+    el.textContent = kind === "saved" ? "Enregistré sur cet appareil" : (kind === "nostore" ? "Ce navigateur n'enregistre pas les coches : utilise « Transférer mes coches »" : "");
+    el.className = "status" + (kind === "saved" ? " ok" : "");
+  }
+  function persist(){ if (lsSet(KEY, JSON.stringify(Array.from(done)))) setStatus("saved"); else setStatus("nostore"); }
+  function applyCode(txt){
+    var ids = String(txt).split(/[\s,;]+/).filter(function(x){ return ALL_IDS[x]; });
+    if (!ids.length) return false;
+    done = new Set(ids); persist(); render(); return true;
+  }
+
+  app.addEventListener("click", function(e){
+    var b = e.target.closest ? e.target.closest("[data-view]") : null;
+    if (!b) return;
+    var v = b.getAttribute("data-view");
+    if (v === VIEW) return;
+    VIEW = v;
+    try { localStorage.setItem("objectif-doomsday:view", VIEW); } catch (err) {}
+    render();
+    var t = document.getElementById("tab-" + VIEW); if (t) t.focus();
+  });
+  render();
+  if (!storageOk) setStatus("nostore");
+
+  app.addEventListener("change", function(e){
+    var t = e.target;
+    if (t.id === "hide-seen") { hideSeen = t.checked; lsSet(HIDE, hideSeen ? "1" : "0"); render(); return; }
+    var id = t.getAttribute("data-id"); if (!id) return;
+    if (t.checked) done.add(id); else done.delete(id);
+    refresh(id); persist();
+  });
+  app.addEventListener("click", function(e){
+    var t = e.target, box = document.getElementById("transfer-code"), msg = document.getElementById("transfer-msg");
+    if (t.id === "copy-code") {
+      box.value = Array.from(done).sort().join(",");
+      var p = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(box.value) : Promise.reject();
+      p.then(function(){ msg.textContent = "Code copié. Colle-le sur ton autre appareil."; })
+       .catch(function(){ box.select(); msg.textContent = "Code sélectionné : copie-le avec Ctrl+C ou un appui long."; });
+    }
+    if (t.id === "apply-code") {
+      var ok = applyCode(box.value);
+      var m2 = document.getElementById("transfer-msg");
+      if (m2) m2.textContent = ok ? "Coches importées." : "Code non reconnu. Vérifie que tu as tout collé.";
+      if (ok) { var d = app.querySelector(".transfer"); if (d) d.open = true; }
+    }
+  });
+})();
+</script>
+</body>
+</html>
