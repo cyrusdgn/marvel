@@ -55,6 +55,8 @@ h1{font-family:var(--f-display);font-weight:400;font-size:clamp(48px,11vw,88px);
 @media (max-width:560px){.hud{grid-template-columns:auto auto;justify-content:start}.nums{grid-column:1/-1}}
 
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.toggles{display:flex;flex-wrap:wrap;gap:8px}
+.no-why .name .why{display:none}
 .toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:500;background:var(--surface);border:2px solid var(--edge);border-radius:3px;padding:5px 10px}
 .toggle input{width:18px;height:18px;accent-color:var(--red)}
 .status{font-family:var(--f-mono);font-size:12px;color:var(--muted);min-height:1em}
@@ -79,15 +81,20 @@ h1{font-family:var(--f-display);font-weight:400;font-size:clamp(48px,11vw,88px);
 
 ul{list-style:none;margin:0;padding:0}
 li+li{border-top:1px solid var(--soft)}
-.row{display:grid;grid-template-columns:24px minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:10px 14px;cursor:pointer}
+.row{display:grid;grid-template-columns:24px minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:10px 14px}
 .row:hover{background:color-mix(in srgb,var(--yellow) 16%,transparent)}
-.row input{position:absolute;opacity:0;width:1px;height:1px}
+.tick{position:relative;display:grid;place-items:center;width:24px;height:24px;cursor:pointer}
+.tick input{position:absolute;inset:-8px;width:auto;height:auto;margin:0;opacity:0;cursor:pointer}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .box{width:22px;height:22px;border:3px solid var(--ink);border-radius:3px;display:grid;place-items:center;background:var(--surface);transition:background .15s,transform .15s}
 .box::after{content:"";width:10px;height:5px;border-left:3px solid var(--on-red);border-bottom:3px solid var(--on-red);transform:rotate(-45deg) translate(1px,-1px);opacity:0}
 .row input:checked+.box{background:var(--red);transform:rotate(-6deg)}
 .row input:checked+.box::after{opacity:1}
 .row input:focus-visible+.box{outline:3px solid var(--yellow);outline-offset:2px}
-.name{min-width:0;overflow-wrap:anywhere;font-weight:500}
+.name{display:block;width:100%;min-width:0;margin:0;padding:0;border:0;background:none;font:inherit;font-weight:500;color:inherit;text-align:left;overflow-wrap:anywhere;cursor:pointer}
+.name .t::after{content:"\24D8";display:inline-block;margin-left:6px;font-size:13px;font-weight:400;color:var(--red);text-decoration:none}
+li:not(.done) .name:hover .t{text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:2px;text-underline-offset:3px}
+.name:focus-visible{outline:3px solid var(--yellow);outline-offset:3px;border-radius:2px}
 .name small{display:block;font-size:12px;color:var(--muted);font-weight:400}
 .name .why{display:block;margin-top:3px;padding-left:16px;position:relative;font-size:12.5px;line-height:1.4;font-weight:400;color:var(--ink);opacity:.82}
 .name .why::before{content:"\2192";position:absolute;left:0;top:0;color:var(--red);font-weight:700}
@@ -99,6 +106,8 @@ li.done .name{color:var(--done)}
 li.done .name .t{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2px}
 li.done .kind{opacity:.45}
 
+button.cinema{width:100%;font:inherit;text-align:left;cursor:pointer}
+button.cinema:focus-visible{outline:3px solid var(--red);outline-offset:4px}
 .cinema{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--yellow);color:var(--on-yellow);border:3px solid var(--edge);border-radius:4px;box-shadow:6px 6px 0 var(--red);padding:16px 18px;transform:rotate(-1deg);margin-block:8px}
 .cinema strong{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,6vw,40px);line-height:1;letter-spacing:.03em;text-transform:uppercase;color:var(--red);-webkit-text-stroke:1px var(--edge)}
 .cinema span{font-family:var(--f-mono);font-size:13px;font-weight:500}
@@ -113,15 +122,41 @@ li.done .kind{opacity:.45}
 .tbtns button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--edge)}
 .tbtns button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 
-.tabs{display:flex;flex-wrap:wrap}
-.tabs button{flex:1 1 auto;font-family:var(--f-display);font-size:22px;letter-spacing:.04em;text-transform:uppercase;padding:8px 16px;background:var(--surface);color:var(--ink);border:3px solid var(--edge);cursor:pointer}
-.tabs button+button{margin-left:-3px}
+.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.tabs button{min-width:0;font-family:var(--f-display);font-size:clamp(13px,3.3vw,22px);line-height:1.1;letter-spacing:.03em;text-transform:uppercase;padding:9px 4px;overflow-wrap:anywhere;hyphens:auto;background:var(--surface);color:var(--ink);border:3px solid var(--edge);cursor:pointer}
+.tabs button+button{border-left:0}
 .tabs button[aria-selected="true"]{background:var(--yellow);color:var(--on-yellow);box-shadow:inset 0 -6px 0 var(--red)}
 .tabs button:focus-visible{outline:3px solid var(--red);outline-offset:2px;position:relative;z-index:1}
 .intro{margin:0;color:var(--muted);font-size:14px;max-width:62ch}
 .block.year h3{font-size:34px}
 @media (max-width:560px){.block h3{flex-basis:100%}}
 @media (max-width:420px){.kind{display:none}.row{grid-template-columns:24px minmax(0,1fr) auto}}
+dialog.sheet{padding:0;border:3px solid var(--edge);border-radius:4px;box-shadow:8px 8px 0 var(--red);background:var(--surface);color:var(--ink);width:min(720px,calc(100vw - 24px));max-width:none;max-height:min(86vh,900px);overflow:auto}
+dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
+.sheet-in{padding-bottom:16px}
+.sheet header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 18px;background:var(--red);color:var(--on-red);border-bottom:3px solid var(--edge);position:sticky;top:0;z-index:1}
+.sheet .sk{margin:0 0 6px;font-family:var(--f-mono);font-size:12px;letter-spacing:.03em}
+.sheet h2{margin:0;font-family:var(--f-display);font-weight:400;font-size:clamp(28px,6vw,40px);line-height:1;letter-spacing:.03em;text-transform:uppercase;color:var(--yellow);-webkit-text-stroke:1px var(--edge);text-wrap:balance}
+.sheet .x{flex:none;width:40px;height:40px;border:2px solid var(--edge);border-radius:3px;background:var(--surface);color:var(--ink);font-size:18px;line-height:1;cursor:pointer;box-shadow:3px 3px 0 var(--edge)}
+.sheet .x:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding:16px 18px 0}
+@media (max-width:600px){.cols{grid-template-columns:minmax(0,1fr)}}
+.col h3{margin:0;display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:4px 10px;border:2px solid var(--edge);border-radius:3px;font-family:var(--f-display);font-weight:400;font-size:22px;letter-spacing:.04em;text-transform:uppercase}
+.col.must h3{background:var(--red);color:var(--on-red)}
+.col.refs h3{background:var(--yellow);color:var(--on-yellow)}
+.col h3 span{font-family:var(--f-mono);font-size:12px;letter-spacing:0;text-transform:none;white-space:nowrap}
+.col .lead{margin:8px 0;font-size:13px;color:var(--muted)}
+.pre{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.pre li+li{border-top:0}
+.pre-item{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;border:2px solid var(--edge);border-radius:3px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px;font-weight:500;text-align:left;cursor:pointer}
+.pre-item:hover{background:color-mix(in srgb,var(--yellow) 22%,var(--bg))}
+.pre-item:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.pre .pt{min-width:0;overflow-wrap:anywhere}
+.pre .ps{flex:none;padding:1px 6px;border-radius:2px;background:var(--red);color:var(--on-red);font-family:var(--f-mono);font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.pre li.seen .pt{color:var(--done);text-decoration:line-through;text-decoration-color:var(--red)}
+.pre li.seen .ps{background:var(--soft);color:var(--muted)}
+.sheet .empty{margin:0;padding:8px 0;font-size:14px;color:var(--muted)}
+.sheet .foot{margin:16px 18px 0;font-size:12.5px;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -312,7 +347,7 @@ li.done .kind{opacity:.45}
     xmo:"Les origines de Wolverine. Deadpool & Wolverine s'en moque souvent.",
     xmfc:"La jeunesse de Xavier et Magneto. Days of Future Past en est la suite.",
     wolv:"Wolverine seul au Japon ; sa scène post-générique lance Days of Future Past.",
-    dofp:"Relie les deux générations d'X-Men grâce au voyage dans le temps. Sert pour Apocalypse, Logan et Deadpool.",
+    dofp:"Relie les deux générations d'X-Men grâce au voyage dans le temps. Sert pour Apocalypse et Dark Phoenix.",
     apoc:"Suite de la jeune génération d'X-Men. Prépare Dark Phoenix.",
     dphx:"Dernier film de la jeune génération d'X-Men. Pas nécessaire pour le MCU.",
     nmut:"Histoire à part dans l'univers X-Men. Ne sert pour rien d'autre.",
@@ -347,7 +382,7 @@ li.done .kind{opacity:.45}
     fffs:"Présente les 4 Fantastiques de Terre-828, tous annoncés dans Doomsday. Indispensable.",
     jj1:"Présente Jessica Jones et Luke Cage. Sert pour Luke Cage et The Defenders.",
     lc1:"Luke Cage à Harlem. Sert pour The Defenders.",
-    if1:"Présente Danny Rand et la Main. Sert pour The Defenders.",
+    if1:"Présente Danny Rand, face à la Main déjà croisée dans Daredevil. Sert pour The Defenders.",
     def:"Réunit les quatre héros Netflix. Daredevil S3 commence juste après.",
     pu1:"Frank Castle après Daredevil S2. Sert pour The Punisher S2.",
     jj2:"Jessica après The Defenders. Sert pour Jessica Jones S3.",
@@ -375,7 +410,7 @@ li.done .kind{opacity:.45}
     groot1:"Bonus avec bébé Groot. Pas nécessaire.",
     groot2:"Bonus avec bébé Groot. Pas nécessaire.",
     aos1:"Coulson et son équipe après Avengers ; croise Le Soldat de l'hiver.",
-    aos2:"Développe les Inhumains dans le MCU. Sert pour Agents of S.H.I.E.L.D. S3.",
+    aos2:"Présente les Inhumains dans le MCU. Sert pour Agents of S.H.I.E.L.D. S3.",
     aos3:"Suite avec les Inhumains ; évoque les accords de Sokovie de Civil War.",
     aos4:"Ghost Rider et les androïdes. Les films n'en parlent pas.",
     aos5:"Nouvelle direction pour l'équipe ; évoque Infinity War.",
@@ -400,7 +435,7 @@ li.done .kind{opacity:.45}
     eow:"Histoires anciennes du Wakanda. Pas nécessaire pour Doomsday.",
     mz:"Suite d'un épisode de What If…? S1. Pas nécessaire pour Doomsday.",
     im1:"Les débuts de Tony Stark et du MCU. Base de tout le reste.",
-    hulk:"Bruce Banner, Ross, Betty et le Leader. Sert pour Brave New World.",
+    hulk:"Bruce Banner, Ross, Betty et Samuel Sterns. Sert pour Brave New World.",
     im2:"Présente Black Widow et le S.H.I.E.L.D. de Nick Fury. Prépare Avengers.",
     thor1:"Présente Thor, Loki et Asgard. Sert pour Avengers et Loki.",
     cap1:"Steve Rogers, Bucky, Peggy et Hydra. Sert pour Le Soldat de l'hiver et Falcon et le Soldat de l'hiver.",
@@ -408,7 +443,7 @@ li.done .kind{opacity:.45}
     im3:"Tony après New York, face au Mandarin. Le court All Hail the King et Shang-Chi y font suite.",
     thor2:"Présente l'Éther, une Pierre d'Infinité. Sert pour Endgame.",
     cap2:"Présente le Soldat de l'hiver et Falcon. Sert pour Civil War et Falcon et le Soldat de l'hiver.",
-    gotg1:"Présente les Gardiens et rapproche Thanos. Sert pour Infinity War.",
+    gotg1:"Présente les Gardiens et montre Thanos de plus près. Sert pour Infinity War.",
     aou:"Présente Wanda, Vision et Ultron. Sert pour Civil War, WandaVision et VisionQuest.",
     antman:"Présente Scott Lang, Hope et le monde quantique. Sert pour Endgame et Quantumania.",
     cw:"Divise les Avengers ; présente Black Panther et le Spider-Man de Tom Holland.",
@@ -421,12 +456,152 @@ li.done .kind{opacity:.45}
     amw:"Présente Ghost et approfondit le monde quantique. Sert pour Endgame et Thunderbolts*.",
     cm:"Carol Danvers, Nick Fury et les Skrulls. Sert pour Endgame, Secret Invasion et The Marvels.",
     endg:"Conclut l'histoire des Pierres d'Infinité. Toute la suite en part.",
-    wv:"Wanda et Vision après Endgame ; présente Monica Rambeau. Sert pour Doctor Strange 2, Agatha, VisionQuest et The Marvels.",
+    wv:"Wanda et Vision après Endgame ; présente Monica Rambeau adulte. Sert pour Doctor Strange 2, Agatha, VisionQuest et The Marvels.",
     loki1:"Présente la TVA et le multivers. Sert pour Loki S2, Quantumania et Deadpool & Wolverine.",
     bw:"Présente Yelena, Red Guardian, Taskmaster et Valentina. Sert pour Hawkeye et Thunderbolts*.",
     wi1:"Univers alternatifs ; présente Captain Carter, revue dans Doctor Strange 2.",
     mk:"Présente Moon Knight. Histoire à part pour l'instant.",
     loki2:"Suite directe de Loki S1. Sert pour Deadpool & Wolverine et Doomsday, où Loki est annoncé."
+  };
+  var PRE = {
+    doomsday:[["endg","loki1","loki2","dpw","fws","bnw","tbolts","shangchi","wf","thor4","quantum","fffs"],["cap1","cap2","bw","amw","rag","nwh","ds2","wi1","xm1","xm2","xm3","logan"]],
+    im1:[[],[]],
+    hulk:[[],[]],
+    im2:[["im1"],["hulk"]],
+    thor1:[[],["im2"]],
+    cap1:[[],[]],
+    avg1:[["im1","im2","thor1","cap1"],["hulk"]],
+    im3:[["im1","im2","avg1"],[]],
+    thor2:[["thor1","avg1"],[]],
+    cap2:[["cap1","avg1"],["im2"]],
+    gotg1:[[],["thor2"]],
+    aou:[["avg1","cap2"],["im3","thor2","gotg1"]],
+    antman:[[],["cap2","aou"]],
+    cw:[["cap2","aou"],["im3","antman"]],
+    drs:[[],[]],
+    gotg2:[["gotg1"],[]],
+    hc:[["cw"],["avg1","im1"]],
+    rag:[["thor1","thor2","aou"],["drs"]],
+    bp:[["cw"],[]],
+    iw:[["avg1","aou","cw","rag","gotg1","gotg2","drs","bp"],["thor2","cap2","hc","antman"]],
+    amw:[["antman","cw"],[]],
+    cm:[[],["gotg1"]],
+    endg:[["iw","cm","amw"],["im1","cap1","avg1","thor2","cap2","gotg1","gotg2","aou","rag","drs","hc","bp"]],
+    wv:[["aou","iw","endg"],["cm"]],
+    fws:[["cap1","cap2","cw","endg"],["iw"]],
+    loki1:[["thor1","avg1","endg"],["thor2","rag"]],
+    bw:[["cw"],["avg1","aou","iw"]],
+    wi1:[[],["cap1","gotg1","drs","bp","avg1","endg"]],
+    mk:[[],[]],
+    loki2:[["loki1"],[]],
+    shangchi:[[],["im3","os5","drs","endg"]],
+    eternals:[[],["endg"]],
+    sm1:[[],[]],
+    sm2:[["sm1"],[]],
+    sm3:[["sm1","sm2"],[]],
+    asm1:[[],[]],
+    asm2:[["asm1"],[]],
+    yfns:[[],[]],
+    ffh:[["hc","endg"],["cw","iw"]],
+    nwh:[["hc","ffh","drs","sm1","sm2","sm3","asm1","asm2"],["endg","ven2","dd1"]],
+    ds2:[["drs","wv","nwh"],["wi1","loki1","shangchi","cm","inh","xm1"]],
+    hawkeye:[["endg","bw"],["avg1","aou","iw"]],
+    xm1:[[],[]],
+    xm2:[["xm1"],[]],
+    xm3:[["xm1","xm2"],[]],
+    xmo:[[],["xm1"]],
+    xmfc:[[],["xm1"]],
+    wolv:[["xm3"],["xmo"]],
+    dofp:[["xmfc","xm3"],["xm1","xm2","wolv"]],
+    apoc:[["xmfc","dofp"],[]],
+    dphx:[["apoc"],["xm3"]],
+    nmut:[[],[]],
+    logan:[[],["xm1","xm2","xm3","wolv","dofp"]],
+    dp1:[[],["xmo"]],
+    dp2:[["dp1"],["logan"]],
+    dpw:[["dp1","dp2","logan"],["loki1","endg","xm1","xmo","ff05","blade1","dd03","elek"]],
+    shehulk:[[],["hulk","endg","shangchi","dd1"]],
+    msm:[[],["cm","endg"]],
+    thor4:[["rag","endg"],["thor1","thor2","iw","gotg2"]],
+    wf:[["bp"],["cw","endg"]],
+    wbn:[[],[]],
+    ghs:[["gotg2"],["gotg1","endg"]],
+    quantum:[["antman","amw","endg"],["loki1"]],
+    gotg3:[["gotg1","gotg2","ghs"],["iw","endg"]],
+    sinv:[["cm"],["cw","endg"]],
+    marvels:[["cm","wv","msm"],["sinv","endg"]],
+    echo:[["hawkeye"],["dd1"]],
+    ironheart:[["wf"],["bp"]],
+    agatha:[["wv"],["ds2"]],
+    vq:[["wv","agatha"],["aou","iw","endg","im1","ffh","ds2"]],
+    ba1:[["dd1","dd2","dd3"],["hawkeye","echo","pu1","pu2","def","shehulk"]],
+    bnw:[["fws","hulk"],["eternals","cw","iw","endg"]],
+    tbolts:[["bw","fws","bnw"],["amw","hawkeye","endg"]],
+    wonder:[[],["im3","os5","shangchi"]],
+    ba2:[["ba1"],["dd1","dd2","dd3","echo"]],
+    olk:[["dd2","ba1","ba2"],["pu1","pu2"]],
+    bnd:[["nwh"],["hc","ffh","shehulk","dd2","ba1","olk"]],
+    ff05:[[],[]],
+    ff07:[["ff05"],[]],
+    ff15:[[],[]],
+    fffs:[[],["tbolts","ff05"]],
+    dd1:[[],[]],
+    dd2:[["dd1"],[]],
+    dd3:[["dd1","dd2","def"],["jj1","lc1","if1"]],
+    jj1:[[],["avg1"]],
+    lc1:[[],["jj1","dd2"]],
+    if1:[[],["dd1","dd2"]],
+    def:[["dd1","dd2","jj1","lc1","if1"],[]],
+    pu1:[["dd2"],["dd1"]],
+    jj2:[["jj1","def"],[]],
+    lc2:[["lc1","def"],["if1"]],
+    if2:[["if1","def"],["lc2"]],
+    pu2:[["pu1"],["dd2"]],
+    jj3:[["jj1","jj2"],[]],
+    wi2:[["wi1"],["aou","endg"]],
+    wi3:[["wi1","wi2"],["eternals"]],
+    mweb:[[],[]],
+    ven1:[[],[]],
+    ven2:[["ven1"],[]],
+    morb:[[],["hc","nwh"]],
+    krav:[[],[]],
+    ven3:[["ven1","ven2"],["nwh"]],
+    itsv:[[],["sm1","sm2"]],
+    atsv:[["itsv"],["sm1","asm2","hc","nwh"]],
+    noir:[[],["itsv"]],
+    os1:[["hulk"],["im2"]],
+    os2:[[],["im2","thor1"]],
+    os3:[["avg1"],[]],
+    os4:[["cap1"],[]],
+    os5:[["im3"],[]],
+    tthor:[[],["thor1","cw"]],
+    groot1:[[],["gotg1","gotg2"]],
+    groot2:[["groot1"],["gotg2"]],
+    aos1:[["avg1"],["thor2","cap2","os3"]],
+    aos2:[["aos1"],["cap2","aou"]],
+    aos3:[["aos2"],["cw"]],
+    aos4:[["aos3"],[]],
+    aos5:[["aos4"],["iw"]],
+    aos6:[["aos5"],[]],
+    aos7:[["aos6"],["ac1","ac2"]],
+    ac1:[[],["cap1","os4"]],
+    ac2:[["ac1"],[]],
+    inh:[[],["aos2"]],
+    run1:[[],[]],
+    run2:[["run1"],[]],
+    run3:[["run1","run2"],["cd1","cd2"]],
+    cd1:[[],[]],
+    cd2:[["cd1"],[]],
+    helst:[[],[]],
+    blade1:[[],[]],
+    blade2:[["blade1"],[]],
+    blade3:[["blade1","blade2"],[]],
+    dd03:[[],[]],
+    elek:[["dd03"],[]],
+    xm97:[[],[]],
+    xm972:[["xm97"],[]],
+    eow:[[],["bp","wf"]],
+    mz:[["wi1"],["msm","hawkeye","bw","shangchi","wf"]]
   };
   var RELEASE = {im1:"2008-05",hulk:"2008-06",xm1:"2000-07",sm1:"2002-05",xm2:"2003-05",sm2:"2004-06",ff05:"2005-07",xm3:"2006-05",sm3:"2007-05",ff07:"2007-06",
     xmo:"2009-05",im2:"2010-05",thor1:"2011-05",xmfc:"2011-06",cap1:"2011-07",avg1:"2012-05",asm1:"2012-07",im3:"2013-05",wolv:"2013-07",thor2:"2013-11",
@@ -495,7 +670,7 @@ li.done .kind{opacity:.45}
     aos1:"ABC",aos2:"ABC",aos3:"ABC",aos4:"ABC",aos5:"ABC",aos6:"ABC",aos7:"ABC",ac1:"ABC",ac2:"ABC",inh:"ABC",
     run1:"Hulu",run2:"Hulu",run3:"Hulu",helst:"Hulu",cd1:"Freeform",cd2:"Freeform"};
   var ITEM = {}, PHASE = {}; BLOCKS.forEach(function(b){ b.items.forEach(function(it){ ITEM[it[0]] = it; PHASE[it[0]] = b.phase; }); });
-  var VIEW = (function(){ var v = null; try { v = localStorage.getItem("objectif-doomsday:view"); } catch (e) {} return v === "chrono" ? "chrono" : "sortie"; })();
+  var VIEW = (function(){ var v = null; try { v = localStorage.getItem("objectif-doomsday:view"); } catch (e) {} return v === "chrono" || v === "univers" ? v : "sortie"; })();
   function univ(id){ return UNIV[id] || "MCU"; }
   var EXTRA = '<details class="transfer"><summary>Transférer mes coches vers un autre appareil</summary><p>Les coches sont gardées dans ce navigateur. Pour les retrouver sur ton téléphone ou un autre ordi, copie ton code ici, colle-le là-bas, puis clique sur « Importer ce code ».</p><textarea id="transfer-code" rows="3" spellcheck="false" aria-label="Code de progression"></textarea><div class="tbtns"><button type="button" id="copy-code">Copier mon code</button><button type="button" id="apply-code">Importer ce code</button></div><p class="status" id="transfer-msg" aria-live="polite"></p></details>';
 
@@ -509,6 +684,8 @@ li.done .kind{opacity:.45}
   var done;
   try { var saved = lsGet(KEY); done = new Set(saved ? JSON.parse(saved) : DEFAULT_DONE); } catch (e) { done = new Set(DEFAULT_DONE); }
   var hideSeen = lsGet(HIDE) === "1";
+  var NOWHY = "objectif-doomsday:nowhy";
+  var hideWhy = lsGet(NOWHY) === "1";
   var app = document.getElementById("app");
 
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
@@ -559,12 +736,52 @@ li.done .kind{opacity:.45}
     return s.n + "/" + s.count + (s.left ? " · " + fmt(s.left) + " restantes" : " · terminé");
   }
   function rowHTML(it, withUniv){
-    var isDone = done.has(it[0]);
-    return '<li class="' + (isDone ? "done" : "") + '"' + (isDone && hideSeen ? " hidden" : "") + ' data-row="' + it[0] + '">' +
-      '<label class="row" for="c-' + it[0] + '"><input type="checkbox" id="c-' + it[0] + '" data-id="' + it[0] + '"' + (isDone ? " checked" : "") + '>' +
-      '<span class="box" aria-hidden="true"></span>' +
-      '<span class="name"><span class="t">' + esc(it[1]) + '</span>' + subline(it, withUniv) + (WHY[it[0]] ? '<span class="why">' + esc(WHY[it[0]]) + '</span>' : '') + "</span>" +
-      '<span class="kind' + (it[2] === "Série" ? " serie" : "") + '">' + it[2] + '</span><span class="dur">' + fmt(it[3]) + "</span></label></li>";
+    var id = it[0], isDone = done.has(id);
+    return '<li class="' + (isDone ? "done" : "") + '"' + (isDone && hideSeen ? " hidden" : "") + ' data-row="' + id + '"><div class="row">' +
+      '<label class="tick" for="c-' + id + '"><input type="checkbox" id="c-' + id + '" data-id="' + id + '"' + (isDone ? " checked" : "") + '><span class="box" aria-hidden="true"></span><span class="sr">Vu : ' + esc(it[1]) + '</span></label>' +
+      '<button type="button" class="name" data-info="' + id + '" aria-haspopup="dialog"><span class="t">' + esc(it[1]) + '</span>' + subline(it, withUniv) + (WHY[id] ? '<span class="why">' + esc(WHY[id]) + '</span>' : '') + "</button>" +
+      '<span class="kind' + (it[2] === "Série" ? " serie" : "") + '">' + it[2] + '</span><span class="dur">' + fmt(it[3]) + "</span></div></li>";
+  }
+  function byRelease(a, b){ var x = RELEASE[a] || "", y = RELEASE[b] || ""; return x < y ? -1 : x > y ? 1 : 0; }
+  function preListHTML(ids, emptyText){
+    if (!ids.length) return '<p class="empty">' + emptyText + "</p>";
+    return '<ul class="pre">' + ids.slice().sort(byRelease).map(function(id){
+      var seen = done.has(id);
+      return '<li' + (seen ? ' class="seen"' : '') + '><button type="button" class="pre-item" data-info="' + id + '"><span class="pt">' + esc(ITEM[id][1]) + '</span><span class="ps">' + (seen ? "Vu" : "À voir") + "</span></button></li>";
+    }).join("") + "</ul>";
+  }
+  function seenCount(ids){ var n = 0; ids.forEach(function(id){ if (done.has(id)) n++; }); return ids.length ? '<span>' + n + "/" + ids.length + " vus</span>" : ""; }
+  var dlg = null;
+  function closeInfo(){ if (!dlg) return; if (dlg.close) dlg.close(); else dlg.removeAttribute("open"); }
+  function openInfo(id){
+    var doom = id === "doomsday", it = ITEM[id];
+    if (!it && !doom) return;
+    var p = PRE[id] || [[], []];
+    var must = p[0].filter(function(x){ return ITEM[x]; }), refs = p[1].filter(function(x){ return ITEM[x] && p[0].indexOf(x) < 0; });
+    var title = doom ? "Avengers: Doomsday" : it[1];
+    var sub = doom ? "Au cinéma le 16 décembre 2026 · d\u2019après le casting annoncé"
+      : [univ(id), (RELEASE[id] || "").slice(0, 4), EPISODES[id] ? EPISODES[id] + " épisodes" : it[2], fmt(it[3])].filter(Boolean).join(" · ");
+    if (!dlg) {
+      dlg = document.createElement("dialog");
+      dlg.className = "sheet";
+      dlg.setAttribute("aria-labelledby", "sheet-title");
+      document.body.appendChild(dlg);
+      dlg.addEventListener("click", function(e){
+        if (e.target === dlg || (e.target.closest && e.target.closest("[data-close]"))) { closeInfo(); return; }
+        var b = e.target.closest ? e.target.closest("[data-info]") : null;
+        if (b) openInfo(b.getAttribute("data-info"));
+      });
+    }
+    dlg.innerHTML = '<div class="sheet-in"><header><div><p class="sk">' + esc(sub) + '</p><h2 id="sheet-title">' + esc(title) + '</h2></div>' +
+      '<button type="button" class="x" data-close aria-label="Fermer">\u2715</button></header>' +
+      '<div class="cols"><section class="col must"><h3>Indispensable ' + seenCount(must) + '</h3><p class="lead">À voir avant, pour comprendre l\u2019histoire.</p>' +
+        preListHTML(must, "Rien d\u2019indispensable : tu peux le regarder directement.") + "</section>" +
+      '<section class="col refs"><h3>Pour les références ' + seenCount(refs) + '</h3><p class="lead">Pas obligatoire, mais tu saisiras mieux les clins d\u2019œil.</p>' +
+        preListHTML(refs, "Pas de référence particulière.") + "</section></div>" +
+      '<p class="foot">Touche un titre de ces listes pour voir à son tour ce qu\u2019il faut avoir vu avant lui.</p></div>';
+    if (!dlg.open) { if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }
+    dlg.scrollTop = 0;
+    var x = dlg.querySelector(".x"); if (x) x.focus();
   }
   function sectionHTML(name, note, items, withUniv, cls){
     var s = sums(items);
@@ -576,28 +793,50 @@ li.done .kind{opacity:.45}
   function planHTML(){
     var html = '<div class="phase"><h2>Avant Doomsday</h2></div>';
     BLOCKS.forEach(function(b){ if (b.phase === "avant") html += sectionHTML(b.name, b.note, b.items, false); });
-    html += '<div class="cinema"><strong>Avengers: Doomsday</strong><span>16/12 · au cinéma</span></div>';
+    html += '<button type="button" class="cinema" data-info="doomsday" aria-haspopup="dialog"><strong>Avengers: Doomsday</strong><span>16/12/2026 · au cinéma · ce qu\u2019il faut avoir vu \u24D8</span></button>';
     html += '<div class="phase"><h2>Après</h2><p>pour Secret Wars</p></div>';
     BLOCKS.forEach(function(b){ if (b.phase === "apres") html += sectionHTML(b.name, b.note, b.items, false); });
     return html;
   }
   function sortieHTML(){
-    var html = '<p class="intro">Tout, dans l’ordre de sortie au cinéma ou en streaming, tous univers confondus. Les coches sont les mêmes que dans l’autre onglet.</p>';
+    var html = '<p class="intro">Tout, dans l’ordre de sortie au cinéma ou en streaming, tous univers confondus. Les coches sont les mêmes dans tous les onglets. Touche un titre pour voir ce qu’il faut avoir vu avant.</p>';
     var ids = Object.keys(ITEM).filter(function(id){ return RELEASE[id]; }).sort(function(a, b){ return RELEASE[a] < RELEASE[b] ? -1 : RELEASE[a] > RELEASE[b] ? 1 : 0; });
     var byYear = {}, years = [];
     ids.forEach(function(id){ var y = RELEASE[id].slice(0, 4); if (!byYear[y]) { byYear[y] = []; years.push(y); } byYear[y].push(ITEM[id]); });
     years.forEach(function(y){ html += sectionHTML(y, null, byYear[y], true, "year"); });
-    html += '<div class="cinema"><strong>Avengers: Doomsday</strong><span>16/12/2026 · au cinéma</span></div>';
+    html += '<button type="button" class="cinema" data-info="doomsday" aria-haspopup="dialog"><strong>Avengers: Doomsday</strong><span>16/12/2026 · au cinéma · ce qu\u2019il faut avoir vu \u24D8</span></button>';
     return html;
   }
   function chronoHTML(){
-    var html = '<p class="intro">Tout, rangé selon l’année où se passe l’histoire, tous univers confondus. Les coches sont les mêmes que dans l’autre onglet.</p>';
+    var html = '<p class="intro">Tout, rangé selon l’année où se passe l’histoire, tous univers confondus. Les coches sont les mêmes dans tous les onglets. Touche un titre pour voir ce qu’il faut avoir vu avant.</p>';
     CHRONO.forEach(function(g){
       var items = g[1].map(function(id){ return ITEM[id]; }).filter(Boolean);
       if (!items.length) return;
-      if (g[0] === "Hors chronologie") html += '<div class="cinema"><strong>Avengers: Doomsday</strong><span>16/12/2026 · au cinéma</span></div>';
+      if (g[0] === "Hors chronologie") html += '<button type="button" class="cinema" data-info="doomsday" aria-haspopup="dialog"><strong>Avengers: Doomsday</strong><span>16/12/2026 · au cinéma · ce qu\u2019il faut avoir vu \u24D8</span></button>';
       html += sectionHTML(g[0], g[2], items, true, "year");
     });
+    return html;
+  }
+  var UNIVERS = [
+    ["MCU · Marvel Studios", ["MCU", "Terre-828"], "Films et séries Marvel Studios, y compris les 4 Fantastiques de Terre-828."],
+    ["MCU · Multivers animé", ["Multivers"], "What If…? et Marvel Zombies : des versions alternatives des héros du MCU."],
+    ["Netflix · Defenders", ["Netflix"], "Les séries de Hell's Kitchen, que Born Again prolonge."],
+    ["Marvel Television", ["ABC", "Hulu", "Freeform"], "Séries d'ABC, Hulu et Freeform pensées pour le MCU, que les films n'ont jamais reprises."],
+    ["Fox", ["Fox"], "X-Men, Deadpool, les 4 Fantastiques, Daredevil et Elektra d'avant le rachat par Disney."],
+    ["Sony · Spider-Man de Sam Raimi", ["Sam Raimi"], "La trilogie avec Tobey Maguire."],
+    ["Sony · Spider-Man de Marc Webb", ["Marc Webb"], "Les deux films avec Andrew Garfield."],
+    ["Sony · Univers Spider-Man", ["Sony"], "Venom, Morbius, Madame Web, Kraven et Spider-Noir."],
+    ["Sony · Spider-Verse", ["Spider-Verse"], "Les films d'animation avec Miles Morales."],
+    ["New Line · Blade", ["New Line"], "La trilogie avec Wesley Snipes."],
+    ["Autres univers animés", ["Autre univers"], "Séries animées Marvel avec leur propre continuité."]
+  ];
+  function universHTML(){
+    var html = '<p class="intro">Tout, regroupé par studio et par univers, puis par date de sortie. Les coches sont les mêmes dans tous les onglets. Touche un titre pour voir ce qu\u2019il faut avoir vu avant.</p>';
+    UNIVERS.forEach(function(g){
+      var items = Object.keys(ITEM).filter(function(id){ return g[1].indexOf(univ(id)) >= 0; }).sort(byRelease).map(function(id){ return ITEM[id]; });
+      if (items.length) html += sectionHTML(g[0], g[2], items, false);
+    });
+    html += '<button type="button" class="cinema" data-info="doomsday" aria-haspopup="dialog"><strong>Avengers: Doomsday</strong><span>16/12/2026 · au cinéma · ce qu\u2019il faut avoir vu \u24D8</span></button>';
     return html;
   }
   function render(){
@@ -605,10 +844,14 @@ li.done .kind{opacity:.45}
       '<div class="tabs" role="tablist" aria-label="Affichage de la liste">' +
         '<button type="button" role="tab" id="tab-sortie" data-view="sortie" aria-selected="' + (VIEW === "sortie") + '">Ordre de sortie</button>' +
         '<button type="button" role="tab" id="tab-chrono" data-view="chrono" aria-selected="' + (VIEW === "chrono") + '">Chronologie des événements</button>' +
+        '<button type="button" role="tab" id="tab-univers" data-view="univers" aria-selected="' + (VIEW === "univers") + '">Par univers</button>' +
       '</div>' +
-      '<div class="toolbar"><label class="toggle" for="hide-seen"><input type="checkbox" id="hide-seen"' + (hideSeen ? " checked" : "") + '> Masquer ce qui est vu</label><span class="status" id="status" aria-live="polite"></span></div>' +
-      (VIEW === "chrono" ? chronoHTML() : sortieHTML()) + EXTRA;
+      '<div class="toolbar"><div class="toggles"><label class="toggle" for="hide-seen"><input type="checkbox" id="hide-seen"' + (hideSeen ? " checked" : "") + '> Masquer ce qui est vu</label>' +
+        '<label class="toggle" for="hide-why"><input type="checkbox" id="hide-why"' + (hideWhy ? " checked" : "") + '> Masquer les notes (anti-spoil)</label></div>' +
+        '<span class="status" id="status" aria-live="polite"></span></div>' +
+      (VIEW === "chrono" ? chronoHTML() : VIEW === "univers" ? universHTML() : sortieHTML()) + EXTRA;
     app.innerHTML = html;
+    app.classList.toggle("no-why", hideWhy);
   }
   function refresh(id){
     var li = app.querySelector('[data-row="' + id + '"]');
@@ -636,6 +879,10 @@ li.done .kind{opacity:.45}
   }
 
   app.addEventListener("click", function(e){
+    var info = e.target.closest ? e.target.closest("[data-info]") : null;
+    if (info) { openInfo(info.getAttribute("data-info")); return; }
+  });
+  app.addEventListener("click", function(e){
     var b = e.target.closest ? e.target.closest("[data-view]") : null;
     if (!b) return;
     var v = b.getAttribute("data-view");
@@ -651,6 +898,7 @@ li.done .kind{opacity:.45}
   app.addEventListener("change", function(e){
     var t = e.target;
     if (t.id === "hide-seen") { hideSeen = t.checked; lsSet(HIDE, hideSeen ? "1" : "0"); render(); return; }
+    if (t.id === "hide-why") { hideWhy = t.checked; lsSet(NOWHY, hideWhy ? "1" : "0"); app.classList.toggle("no-why", hideWhy); return; }
     var id = t.getAttribute("data-id"); if (!id) return;
     if (t.checked) done.add(id); else done.delete(id);
     refresh(id); persist();
