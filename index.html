@@ -52,6 +52,8 @@ h1{font-family:var(--f-display);font-weight:400;font-size:clamp(48px,11vw,88px);
 .nums div:last-child{border-bottom:0;padding-bottom:0}
 .nums b{font-family:var(--f-mono);font-weight:500;font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .nums span{font-size:12.5px}
+.nums .doom{margin-top:2px;padding:6px 8px;border:2px solid var(--edge);border-radius:3px;background:var(--yellow);color:var(--on-yellow)}
+.nums .doom b{font-size:17px}
 @media (max-width:560px){.hud{grid-template-columns:auto auto;justify-content:start}.nums{grid-column:1/-1}}
 
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
@@ -928,21 +930,22 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
   }
   function beforeItems(){ var a = []; BLOCKS.forEach(function(b){ if (b.phase === "avant") a = a.concat(b.items); }); return a; }
 
+  function allItems(){ var a = []; BLOCKS.forEach(function(b){ a = a.concat(b.items); }); return a; }
   function statsHTML(){
-    var s = sums(beforeItems()), d = daysLeft();
-    var pct = s.count ? Math.round(s.n / s.count * 100) : 0;
+    var all = sums(allItems()), s = sums(beforeItems()), d = daysLeft();
+    var pct = all.count ? Math.round(all.n / all.count * 100) : 0;
     var pace = d > 0 ? fmt(Math.ceil(s.left / d)) : "—";
     var C = 2 * Math.PI * 50, off = C * (1 - pct / 100);
     return '<div class="hud">' +
       '<div class="burst"><b>' + (d > 0 ? "J-" + d : (d === 0 ? "Jour J" : "Vu !")) + '</b><span>avant le ciné</span></div>' +
-      '<svg class="gauge" viewBox="0 0 120 120" role="img" aria-label="' + pct + ' % vu avant Doomsday">' +
+      '<svg class="gauge" viewBox="0 0 120 120" role="img" aria-label="' + pct + ' % de tous les titres vus">' +
         '<circle class="g-track" cx="60" cy="60" r="50"></circle>' +
         '<circle class="g-fill" cx="60" cy="60" r="50" transform="rotate(-90 60 60)" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"></circle>' +
-        '<text class="g-num" x="60" y="64">' + pct + '%</text><text class="g-lab" x="60" y="82">VU</text></svg>' +
+        '<text class="g-num" x="60" y="64">' + pct + '%</text><text class="g-lab" x="60" y="82">DE TOUT</text></svg>' +
       '<div class="nums">' +
-        '<div><b>' + s.n + "/" + s.count + '</b><span>vus avant Doomsday</span></div>' +
-        '<div><b>' + fmt(s.left) + '</b><span>restantes</span></div>' +
-        '<div><b>' + pace + '</b><span>par jour à tenir</span></div>' +
+        '<div><b>' + all.n + "/" + all.count + '</b><span>titres vus au total</span></div>' +
+        '<div><b>' + fmt(all.left) + '</b><span>restantes pour tout voir</span></div>' +
+        '<div class="doom"><b>' + s.n + "/" + s.count + '</b><span>du programme avant Doomsday · ' + fmt(s.left) + ' restantes · ' + pace + ' par jour</span></div>' +
       '</div></div>';
   }
   var UCOL = {"Autre studio":"#8a8a92","Télévision":"#e0a020","Animation":"#16a3a3","Documentaire":"#6b6b74","MCU":"var(--red)","Terre-828":"#3fa9f5","Multivers":"#c24bd1","Netflix":"#f08a24","ABC":"#16a37b","Hulu":"#16a37b","Freeform":"#16a37b","Fox":"#2f6fd6","Sam Raimi":"#7b4fd6","Marc Webb":"#7b4fd6","Sony":"#7b4fd6","Spider-Verse":"#7b4fd6","New Line":"#8a8a92","Autre univers":"#8a8a92"};
