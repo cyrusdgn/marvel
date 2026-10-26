@@ -55,7 +55,15 @@ h1{font-family:var(--f-display);font-weight:400;font-size:clamp(48px,11vw,88px);
 @media (max-width:560px){.hud{grid-template-columns:auto auto;justify-content:start}.nums{grid-column:1/-1}}
 
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
-.toggles{display:flex;flex-wrap:wrap;gap:8px}
+.toggles{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.clear{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px}
+.clear .ask{font-size:14px;font-weight:600}
+.cbtn{font:inherit;font-size:14px;font-weight:500;padding:5px 12px;border:2px solid var(--edge);border-radius:3px;background:var(--surface);color:var(--ink);cursor:pointer;box-shadow:2px 2px 0 var(--edge)}
+.cbtn:hover{background:color-mix(in srgb,var(--yellow) 25%,var(--surface))}
+.cbtn:disabled{opacity:.45;cursor:default;box-shadow:none}
+.cbtn.danger{background:var(--red);color:var(--on-red)}
+.cbtn:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
 .no-why .name .why{display:none}
 .toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;font-weight:500;background:var(--surface);border:2px solid var(--edge);border-radius:3px;padding:5px 10px}
 .toggle input{width:18px;height:18px;accent-color:var(--red)}
@@ -70,6 +78,16 @@ h1{font-family:var(--f-display);font-weight:400;font-size:clamp(48px,11vw,88px);
 .block{background:var(--surface);border:3px solid var(--edge);border-radius:4px;box-shadow:5px 5px 0 var(--shadow);overflow:hidden}
 .block header{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 14px 12px;background:var(--edge);color:var(--on-red)}
 .block h3{font-family:var(--f-display);font-weight:400;font-size:27px;letter-spacing:.04em;text-transform:uppercase;margin:0;flex:1;min-width:0;color:var(--yellow)}
+.block header{position:relative}
+.fold{all:unset;cursor:pointer}
+.fold::before{content:"";position:absolute;inset:0;z-index:1}
+.fold:focus-visible::before{outline:3px solid var(--yellow);outline-offset:-4px}
+.block header:hover{filter:brightness(1.12)}
+.chev{width:26px;height:26px;flex:none;display:grid;place-items:center;border:2px solid var(--yellow);border-radius:50%;transition:transform .2s}
+.chev::before{content:"";width:7px;height:7px;border-right:2.5px solid var(--yellow);border-bottom:2.5px solid var(--yellow);transform:translateY(-2px) rotate(45deg)}
+.block.shut .chev{transform:rotate(-90deg)}
+.block.shut ul{display:none}
+.block.shut header{border-bottom:0}
 .block .meta{font-family:var(--f-mono);font-size:12px;font-variant-numeric:tabular-nums;opacity:.85}
 .block .bnote{flex-basis:100%;margin:0;font-size:12.5px;opacity:.78}
 .segs{flex-basis:100%;display:flex;flex-wrap:wrap;gap:4px;padding-top:2px}
@@ -1019,9 +1037,12 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
     dlg.scrollTop = 0;
     var x = dlg.querySelector(".x"); if (x) x.focus();
   }
+  var FOLD = (function(){ try { return JSON.parse(localStorage.getItem("objectif-doomsday:fold") || "{}") || {}; } catch (e) { return {}; } })();
+  function foldKey(name){ return VIEW + "|" + name; }
   function sectionHTML(name, note, items, withUniv, cls){
-    var s = sums(items);
-    return '<section class="block' + (cls ? " " + cls : "") + (s.n === s.count ? " complete" : "") + '" data-ids="' + items.map(function(it){ return it[0]; }).join(",") + '"><header><h3>' + esc(name) + '</h3><span class="meta">' + meta(items) + '</span>' +
+    var s = sums(items), key = foldKey(name), shut = !!FOLD[key];
+    return '<section class="block' + (cls ? " " + cls : "") + (s.n === s.count ? " complete" : "") + (shut ? " shut" : "") + '" data-ids="' + items.map(function(it){ return it[0]; }).join(",") + '"><header>' +
+      '<h3><button type="button" class="fold" data-fold="' + esc(key) + '" aria-expanded="' + (!shut) + '">' + esc(name) + '</button></h3><span class="meta">' + meta(items) + '</span><span class="chev" aria-hidden="true"></span>' +
       (note ? '<p class="bnote">' + esc(note) + '</p>' : '') +
       '<span class="segs" aria-hidden="true">' + items.map(function(it){ return '<i' + (done.has(it[0]) ? ' class="on"' : '') + '></i>'; }).join("") + '</span></header><ul>' +
       items.map(function(it){ return rowHTML(it, withUniv); }).join("") + "</ul></section>";
@@ -1084,6 +1105,19 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
     });
     return html;
   }
+  var clearStep = 0, clearTimer = null, undoSet = null;
+  function clearHTML(){
+    if (clearStep === 1) return '<span class="ask">Tout décocher ?</span><button type="button" class="cbtn danger" id="clear-yes">Oui, tout décocher</button><button type="button" class="cbtn" id="clear-no">Annuler</button>';
+    if (clearStep === 2) return '<span class="ask">Tout est décoché.</span><button type="button" class="cbtn" id="clear-undo">Rétablir mes coches</button>';
+    return '<button type="button" class="cbtn" id="clear-all"' + (done.size ? "" : " disabled") + '>Tout décocher</button>';
+  }
+  function showClear(step){
+    clearStep = step;
+    if (clearTimer) { clearTimeout(clearTimer); clearTimer = null; }
+    var z = document.getElementById("clear-zone"); if (z) z.innerHTML = clearHTML();
+    if (step === 1) { var y = document.getElementById("clear-no"); if (y) y.focus(); clearTimer = setTimeout(function(){ showClear(0); }, 8000); }
+    if (step === 2) clearTimer = setTimeout(function(){ undoSet = null; showClear(0); }, 15000);
+  }
   function render(){
     var html = '<section class="plate"><p class="eyebrow">Cinéma · mercredi 16 décembre</p><h1>Objectif Doomsday</h1><div id="stats">' + statsHTML() + "</div></section>" +
       '<div class="tabs" role="tablist" aria-label="Affichage de la liste">' +
@@ -1093,7 +1127,8 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
         '<button type="button" role="tab" id="tab-hors" data-view="hors" aria-selected="' + (VIEW === "hors") + '">Hors MCU</button>' +
       '</div>' +
       '<div class="toolbar"><div class="toggles"><label class="toggle" for="hide-seen"><input type="checkbox" id="hide-seen"' + (hideSeen ? " checked" : "") + '> Masquer ce qui est vu</label>' +
-        '<label class="toggle" for="hide-why"><input type="checkbox" id="hide-why"' + (hideWhy ? " checked" : "") + '> Masquer les notes (anti-spoil)</label></div>' +
+        '<label class="toggle" for="hide-why"><input type="checkbox" id="hide-why"' + (hideWhy ? " checked" : "") + '> Masquer les notes (anti-spoil)</label>' +
+        '<span class="clear" id="clear-zone">' + clearHTML() + '</span></div>' +
         '<span class="status" id="status" aria-live="polite"></span></div>' +
       (VIEW === "chrono" ? chronoHTML() : VIEW === "univers" ? universHTML() : VIEW === "hors" ? horsHTML() : sortieHTML()) + EXTRA;
     app.innerHTML = html;
@@ -1125,6 +1160,24 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
   }
 
   app.addEventListener("click", function(e){
+    var f = e.target.closest ? e.target.closest("[data-fold]") : null;
+    if (!f) return;
+    var key = f.getAttribute("data-fold"), sec = f.closest("section"), shut = !sec.classList.contains("shut");
+    sec.classList.toggle("shut", shut); f.setAttribute("aria-expanded", String(!shut));
+    if (shut) FOLD[key] = 1; else delete FOLD[key];
+    try { localStorage.setItem("objectif-doomsday:fold", JSON.stringify(FOLD)); } catch (err) {}
+  });
+  app.addEventListener("click", function(e){
+    var id = e.target && e.target.id;
+    if (id === "clear-all") { showClear(1); return; }
+    if (id === "clear-no") { showClear(0); var c = document.getElementById("clear-all"); if (c) c.focus(); return; }
+    if (id === "clear-yes") {
+      undoSet = new Set(done); done = new Set(); persist(); render(); showClear(2);
+      var u = document.getElementById("clear-undo"); if (u) u.focus(); return;
+    }
+    if (id === "clear-undo" && undoSet) { done = undoSet; undoSet = null; persist(); render(); showClear(0); return; }
+  });
+  app.addEventListener("click", function(e){
     var info = e.target.closest ? e.target.closest("[data-info]") : null;
     if (info) { openInfo(info.getAttribute("data-info")); return; }
   });
@@ -1147,7 +1200,7 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
     if (t.id === "hide-why") { hideWhy = t.checked; lsSet(NOWHY, hideWhy ? "1" : "0"); app.classList.toggle("no-why", hideWhy); return; }
     var id = t.getAttribute("data-id"); if (!id) return;
     if (t.checked) done.add(id); else done.delete(id);
-    refresh(id); persist();
+    refresh(id); persist(); if (clearStep === 0) showClear(0);
   });
   app.addEventListener("click", function(e){
     var t = e.target, box = document.getElementById("transfer-code"), msg = document.getElementById("transfer-msg");
