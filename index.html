@@ -134,15 +134,15 @@ button.cinema:focus-visible{outline:3px solid var(--red);outline-offset:4px}
 .tbtns button:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
-.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));box-shadow:4px 4px 0 var(--shadow)}
-.tabs button{min-width:0;font-family:var(--f-display);font-size:clamp(13px,3.3vw,22px);line-height:1.1;letter-spacing:.03em;text-transform:uppercase;padding:9px 4px;overflow-wrap:anywhere;hyphens:auto;background:var(--surface);color:var(--ink);border:3px solid var(--edge);cursor:pointer}
-.tabs button+button{border-left:0}
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;background:var(--edge);border:3px solid var(--edge);box-shadow:4px 4px 0 var(--shadow)}
+.tabs button{min-width:0;font-family:var(--f-display);font-size:clamp(13px,3.3vw,22px);line-height:1.1;letter-spacing:.03em;text-transform:uppercase;padding:9px 4px;overflow-wrap:anywhere;hyphens:auto;background:var(--surface);color:var(--ink);border:0;cursor:pointer}
+.tabs button:focus-visible{z-index:1}
 .tabs button[aria-selected="true"]{background:var(--yellow);color:var(--on-yellow);box-shadow:inset 0 -6px 0 var(--red)}
 .tabs button:focus-visible{outline:3px solid var(--red);outline-offset:2px;position:relative;z-index:1}
 .intro{margin:0;color:var(--muted);font-size:14px;max-width:62ch}
 .block.year header{padding:8px 16px 10px}
 .block.year h3{font-size:30px}
-@media (max-width:560px){.block h3{flex-basis:100%}}
+@media (max-width:560px){.block h3{flex-basis:100%}.tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.tabs button{font-size:15px;padding:10px 6px}}
 @media (max-width:480px){.kind{display:none}.row{grid-template-columns:28px minmax(0,1fr) auto 24px;gap:12px;padding:14px 12px}.dur{min-width:0}}
 dialog.sheet{padding:0;border:3px solid var(--edge);border-radius:4px;box-shadow:8px 8px 0 var(--red);background:var(--surface);color:var(--ink);width:min(720px,calc(100vw - 24px));max-width:none;max-height:min(86vh,900px);overflow:auto}
 dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
@@ -332,12 +332,153 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
       ["bw","Black Widow","Film",134],
       ["wi1","What If...? S1","Série",288],
       ["mk","Moon Knight","Série",280],
-      ["loki2","Loki S2","Série",300]]}
+      ["loki2","Loki S2","Série",300]]},
+    {id:"plus", name:"Ajouts", phase:"apres", items:[
+      ["xtas","X-Men : la série animée","Série",1672,"Série des années 90"],
+      ["sling","Agents of S.H.I.E.L.D.: Slingshot","Court",35,"Mini-série web"]]},
+    {id:"bonus", name:"Bonus", phase:"bonus", items:[
+      ["legends","Marvel Studios : Legends","Série",330,"Résumés de 10 min par personnage"]]},
+    {id:"h-films", name:"Films live-action", note:"Les films Marvel produits par d'autres studios avant ou à côté du MCU.", phase:"hors", items:[
+      ["htd","Howard the Duck","Film",110],
+      ["pun89","The Punisher (1989)","Film",89,"Avec Dolph Lundgren"],
+      ["cap90","Captain America (1990)","Film",97],
+      ["ff94","Les 4 Fantastiques (1994)","Film",90,"Jamais sorti officiellement"],
+      ["hulk03","Hulk (2003)","Film",138,"Réalisé par Ang Lee"],
+      ["pun04","The Punisher (2004)","Film",124,"Avec Thomas Jane"],
+      ["mthing","Man-Thing","Film",97],
+      ["gr1","Ghost Rider","Film",110,"Avec Nicolas Cage"],
+      ["punwz","Punisher: War Zone","Film",103,"Avec Ray Stevenson"],
+      ["gr2","Ghost Rider : L'Esprit de vengeance","Film",96,"Avec Nicolas Cage"]]},
+    {id:"h-tv", name:"Séries et téléfilms live-action", note:"Les séries et téléfilms Marvel d'avant le MCU, et les séries X-Men de la Fox.", phase:"hors", items:[
+      ["asmtv","L'Araignée (série 1977)","Série",700,"The Amazing Spider-Man"],
+      ["ihulk","L'Incroyable Hulk (série 1977)","Série",3936,"Avec Bill Bixby et Lou Ferrigno"],
+      ["smjp","Spider-Man (série japonaise 1978)","Série",984,"Produite par Toei"],
+      ["drs78","Doctor Strange (1978)","Téléfilm",94],
+      ["cap79","Captain America (téléfilms 1979)","Téléfilm",190,"2 téléfilms"],
+      ["ihtv","Les téléfilms de L'Incroyable Hulk","Téléfilm",285,"3 téléfilms, avec Thor et Daredevil"],
+      ["genx","Generation X (1996)","Téléfilm",90],
+      ["nfury","Nick Fury: Agent of S.H.I.E.L.D. (1998)","Téléfilm",90,"Avec David Hasselhoff"],
+      ["mutx","Mutant X","Série",2838],
+      ["legion1","Legion S1","Série",400,"Univers X-Men"],
+      ["gifted1","The Gifted S1","Série",559,"Univers X-Men"],
+      ["legion2","Legion S2","Série",550,"Univers X-Men"],
+      ["gifted2","The Gifted S2","Série",688,"Univers X-Men"],
+      ["legion3","Legion S3","Série",360,"Univers X-Men"]]},
+    {id:"h-anim", name:"Séries animées", note:"Les grandes séries animées Marvel, chacune avec sa propre continuité.", phase:"hors", items:[
+      ["sm67","Spider-Man (série 1967)","Série",1144,"Celle du mème des deux Spider-Man"],
+      ["sm81","Spider-Man et ses amis extraordinaires (1981)","Série",528],
+      ["im94","Iron Man (série 1994)","Série",572],
+      ["ff94a","Les 4 Fantastiques (série 1994)","Série",572],
+      ["smtas","Spider-Man : la série animée (1994)","Série",1430],
+      ["hulk96","L'Incroyable Hulk (série 1996)","Série",462],
+      ["ssurf","Silver Surfer (1998)","Série",286],
+      ["avuta","Avengers: United They Stand","Série",286],
+      ["xmevo","X-Men: Evolution","Série",1144],
+      ["smnas","Spider-Man : les nouvelles aventures (2003)","Série",286,"Animation 3D"],
+      ["ffwgh","Fantastic Four : World's Greatest Heroes","Série",572],
+      ["specsm","The Spectacular Spider-Man","Série",572],
+      ["wxm","Wolverine et les X-Men","Série",572],
+      ["imaa","Iron Man : Armored Adventures","Série",1144],
+      ["shsq","The Super Hero Squad Show","Série",1144,"Série jeunesse"],
+      ["avemh","Avengers : l'équipe des super-héros","Série",1144,"Earth's Mightiest Heroes"],
+      ["anime","Marvel Anime","Série",1056,"Iron Man, Wolverine, X-Men et Blade"],
+      ["usm","Ultimate Spider-Man","Série",2288],
+      ["avass","Avengers Rassemblement","Série",2772,"Avengers Assemble"],
+      ["smash","Hulk et les agents du S.M.A.S.H.","Série",1144],
+      ["gotgan","Les Gardiens de la Galaxie (série 2015)","Série",1716],
+      ["msm17","Marvel's Spider-Man (2017)","Série",1276],
+      ["modok","M.O.D.O.K.","Série",250,"Comédie pour adultes"],
+      ["spidey","Spidey et ses amis extraordinaires","Série",1200,"Pour les tout-petits"],
+      ["hitm","Hit-Monkey","Série",500,"Pour adultes"],
+      ["moongirl","Moon Girl and Devil Dinosaur","Série",682]]},
+    {id:"h-animf", name:"Films d'animation", note:"Les films d'animation Marvel sortis directement en vidéo.", phase:"hors", items:[
+      ["ua1","Ultimate Avengers","Film",72],
+      ["ua2","Ultimate Avengers 2","Film",73],
+      ["iim","The Invincible Iron Man","Film",83],
+      ["dsss","Doctor Strange: Sorcerer Supreme","Film",76],
+      ["nextav","Next Avengers: Heroes of Tomorrow","Film",78],
+      ["hulkvs","Hulk Vs","Film",82,"Contre Wolverine et contre Thor"],
+      ["phulk","Planet Hulk","Film",81],
+      ["thortoa","Thor: Tales of Asgard","Film",77],
+      ["imrt","Iron Man: Rise of Technovore","Film",88,"Animation japonaise"],
+      ["hunited","Iron Man & Hulk: Heroes United","Film",71],
+      ["avconf","Avengers Confidential: Black Widow & Punisher","Film",83,"Animation japonaise"],
+      ["cunited","Iron Man & Captain America: Heroes United","Film",71]]},
+    {id:"h-docs", name:"Documentaires", note:"Les coulisses de Marvel Studios et de Marvel Comics.", phase:"hors", items:[
+      ["m616","Marvel's 616","Série",400],
+      ["assembled","Marvel Studios : Assembled","Série",1500,"Un making-of par film ou série"]]}
   ];
-  var EPISODES = {wv:9,loki1:6,loki2:6,wi1:9,mk:6,dd1:13,dd2:13,dd3:13,fws:6,yfns:10,hawkeye:6,shehulk:9,msm:6,sinv:6,echo:5,ironheart:6,agatha:9,vq:8,ba1:9,wonder:8,ba2:8,jj1:13,lc1:13,if1:13,def:8,pu1:13,jj2:13,lc2:13,if2:10,pu2:13,jj3:13,wi2:9,wi3:8,
+  var EPISODES = {xtas:76,sling:6,asmtv:14,ihulk:82,smjp:41,mutx:66,legion1:8,gifted1:13,legion2:11,gifted2:16,legion3:8,sm67:52,sm81:24,im94:26,ff94a:26,smtas:65,hulk96:21,ssurf:13,avuta:13,xmevo:52,smnas:13,ffwgh:26,specsm:26,wxm:26,imaa:52,shsq:52,avemh:52,anime:48,usm:104,avass:126,smash:52,gotgan:78,msm17:58,modok:10,hitm:20,moongirl:31,m616:8,wv:9,loki1:6,loki2:6,wi1:9,mk:6,dd1:13,dd2:13,dd3:13,fws:6,yfns:10,hawkeye:6,shehulk:9,msm:6,sinv:6,echo:5,ironheart:6,agatha:9,vq:8,ba1:9,wonder:8,ba2:8,jj1:13,lc1:13,if1:13,def:8,pu1:13,jj2:13,lc2:13,if2:10,pu2:13,jj3:13,wi2:9,wi3:8,
     noir:8,groot1:5,groot2:5,aos1:22,aos2:22,aos3:22,aos4:22,aos5:22,aos6:13,aos7:13,ac1:8,ac2:10,inh:8,run1:10,run2:13,run3:10,cd1:10,cd2:10,helst:10,
     xm97:10,xm972:9,eow:4,mz:4};
   var WHY = {
+    xtas:"La série culte des années 90. X-Men '97 en est la suite directe.",
+    legends:"Résumés courts des héros du MCU : idéal pour se rafraîchir la mémoire avant Doomsday.",
+    sling:"Mini-série web sur Yo-Yo, glissée entre deux épisodes d'Agents of S.H.I.E.L.D. S4.",
+    htd:"Le canard de l'espace de Lucasfilm. Aucun lien avec le MCU.",
+    pun89:"Premier Punisher au cinéma. Aucun lien avec le MCU.",
+    cap90:"Une adaptation à petit budget de Captain America. Aucun lien avec le MCU.",
+    ff94:"Film produit par Roger Corman, resté inédit. Pour les curieux.",
+    hulk03:"Un Hulk d'auteur avec Eric Bana. Aucun lien avec le MCU.",
+    pun04:"Le Punisher version Thomas Jane. Aucun lien avec le MCU.",
+    mthing:"Film d'horreur sur la créature des marais. Aucun lien avec le MCU.",
+    gr1:"Johnny Blaze version Nicolas Cage. Aucun lien avec le MCU.",
+    punwz:"Un Punisher très violent, sans lien avec les précédents ni avec le MCU.",
+    gr2:"Suite de Ghost Rider. Aucun lien avec le MCU.",
+    asmtv:"Le premier Spider-Man en prises de vue réelles. Aucun lien avec le MCU.",
+    ihulk:"La série culte avec Lou Ferrigno. Aucun lien avec le MCU.",
+    smjp:"Un Spider-Man japonais avec un robot géant. Aucun lien avec le MCU.",
+    drs78:"Pilote d'une série jamais lancée. Aucun lien avec le MCU.",
+    cap79:"Deux téléfilms avec Reb Brown. Aucun lien avec le MCU.",
+    ihtv:"Suite de la série de 1977, où apparaissent Thor et Daredevil. Aucun lien avec le MCU.",
+    genx:"Jeunes mutants à l'école de Xavier, sans Xavier. Aucun lien avec le MCU.",
+    nfury:"Nick Fury version David Hasselhoff. Aucun lien avec le MCU.",
+    mutx:"Série sur des mutants, sans les X-Men. Aucun lien avec le MCU.",
+    legion1:"Le fils de Xavier, entre folie et pouvoirs. Aucun lien avec le MCU.",
+    gifted1:"Une famille de mutants en fuite. Aucun lien avec le MCU.",
+    legion2:"Suite directe de Legion S1.",
+    gifted2:"Suite directe de The Gifted S1.",
+    legion3:"Dernière saison de Legion.",
+    sm67:"La toute première série Spider-Man et son générique culte. Aucun lien avec le MCU.",
+    sm81:"Spider-Man, Iceberg et Firestar en colocation. Aucun lien avec le MCU.",
+    im94:"Iron Man en dessin animé des années 90. Aucun lien avec le MCU.",
+    ff94a:"Les 4 Fantastiques des années 90. Aucun lien avec le MCU.",
+    smtas:"La série Spider-Man de référence des années 90. Aucun lien avec le MCU.",
+    hulk96:"Hulk en dessin animé des années 90. Aucun lien avec le MCU.",
+    ssurf:"Le Surfer d'argent dans l'espace. Aucun lien avec le MCU.",
+    avuta:"Les Avengers de la fin des années 90. Aucun lien avec le MCU.",
+    xmevo:"Les X-Men en version lycéens. Aucun lien avec le MCU.",
+    smnas:"Suite animée du film de Sam Raimi, à part. Aucun lien avec le MCU.",
+    ffwgh:"Les 4 Fantastiques en style manga. Aucun lien avec le MCU.",
+    specsm:"Une des séries Spider-Man préférées des fans. Aucun lien avec le MCU.",
+    wxm:"Wolverine reforme les X-Men. Aucun lien avec le MCU.",
+    imaa:"Tony Stark adolescent. Aucun lien avec le MCU.",
+    shsq:"Les héros Marvel en version jouets rigolos. Aucun lien avec le MCU.",
+    avemh:"La série Avengers la plus fidèle aux comics. Aucun lien avec le MCU.",
+    anime:"Quatre mini-séries d'animation japonaise. Aucun lien avec le MCU.",
+    usm:"Peter Parker formé par le S.H.I.E.L.D. Aucun lien avec le MCU.",
+    avass:"Les Avengers inspirés du film de 2012, en continuité à part.",
+    smash:"Hulk, She-Hulk et leur équipe gamma. Aucun lien avec le MCU.",
+    gotgan:"Les Gardiens inspirés du film, en continuité à part.",
+    msm17:"Peter Parker au lycée des génies. Aucun lien avec le MCU.",
+    modok:"Le méchant à grosse tête en sitcom en pâte à modeler. Aucun lien avec le MCU.",
+    spidey:"Spider-Man, Ghost-Spider et Spin pour les petits. Aucun lien avec le MCU.",
+    hitm:"Un singe tueur à gages au Japon. Aucun lien avec le MCU.",
+    moongirl:"Une ado géniale et son dinosaure à New York. Aucun lien avec le MCU.",
+    ua1:"Les Avengers version Ultimates. Aucun lien avec le MCU.",
+    ua2:"Suite directe d'Ultimate Avengers.",
+    iim:"Une origine d'Iron Man en Chine. Aucun lien avec le MCU.",
+    dsss:"Les débuts de Strange en animation. Aucun lien avec le MCU.",
+    nextav:"Les enfants des Avengers face à Ultron. Aucun lien avec le MCU.",
+    hulkvs:"Deux combats de Hulk en un film. Aucun lien avec le MCU.",
+    phulk:"Hulk gladiateur sur Sakaar, l'inspiration de Ragnarok. Aucun lien avec le MCU.",
+    thortoa:"Le jeune Thor et Loki. Aucun lien avec le MCU.",
+    imrt:"Iron Man en anime. Aucun lien avec le MCU.",
+    hunited:"Iron Man et Hulk en équipe. Aucun lien avec le MCU.",
+    avconf:"Black Widow et le Punisher en anime. Aucun lien avec le MCU.",
+    cunited:"Iron Man et Captain America face à Crâne Rouge. Aucun lien avec le MCU.",
+    m616:"L'influence de Marvel dans le monde réel. Aucun lien avec l'histoire du MCU.",
+    assembled:"Les coulisses de chaque production Marvel Studios. À voir après le titre concerné.",
     dd1:"Présente Matt Murdock, Karen, Foggy et le Kingpin. Base de Daredevil S2-S3, The Defenders, Echo et Born Again.",
     dd2:"Présente le Punisher et Elektra. Sert pour The Punisher, The Defenders, Born Again, One Last Kill et Brand New Day.",
     dd3:"Ferme la trilogie Netflix de Matt et présente un nouvel ennemi. Born Again reprend juste après.",
@@ -477,6 +618,18 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
     loki2:"Suite directe de Loki S1. Sert pour Deadpool & Wolverine et Doomsday, où Loki est annoncé."
   };
   var PRE = {
+    sling:[["aos3"],["aos4"]],
+    gr2:[["gr1"],[]],
+    ihtv:[["ihulk"],[]],
+    legion1:[[],["xm1"]],
+    gifted1:[[],["xm1"]],
+    legion2:[["legion1"],[]],
+    gifted2:[["gifted1"],[]],
+    legion3:[["legion1", "legion2"],[]],
+    smnas:[[],["sm1"]],
+    ua2:[["ua1"],[]],
+    phulk:[[],["rag"]],
+    cunited:[["hunited"],[]],
     doomsday:[["endg","loki1","loki2","dpw","fws","bnw","tbolts","shangchi","wf","thor4","quantum","fffs"],["cap1","cap2","bw","amw","rag","nwh","ds2","wi1","xm1","xm2","xm3","logan"]],
     im1:[[],[]],
     hulk:[[],[]],
@@ -611,12 +764,12 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
     blade3:[["blade1","blade2"],[]],
     dd03:[[],[]],
     elek:[["dd03"],[]],
-    xm97:[[],[]],
-    xm972:[["xm97"],[]],
+    xm97:[["xtas"],[]],
+    xm972:[["xm97"],["xtas"]],
     eow:[[],["bp","wf"]],
     mz:[["wi1"],["msm","hawkeye","bw","shangchi","wf"]]
   };
-  var RELEASE = {im1:"2008-05",hulk:"2008-06",xm1:"2000-07",sm1:"2002-05",xm2:"2003-05",sm2:"2004-06",ff05:"2005-07",xm3:"2006-05",sm3:"2007-05",ff07:"2007-06",
+  var RELEASE = {xtas:"1992-10",legends:"2021-01",sling:"2016-12",htd:"1986-08",pun89:"1989-10",cap90:"1990-12",ff94:"1994-01",hulk03:"2003-06",pun04:"2004-04",mthing:"2005-04",gr1:"2007-02",punwz:"2008-12",gr2:"2012-02",asmtv:"1977-09",ihulk:"1977-11",smjp:"1978-05",drs78:"1978-09",cap79:"1979-01",ihtv:"1988-05",genx:"1996-02",nfury:"1998-05",mutx:"2001-10",legion1:"2017-02",gifted1:"2017-10",legion2:"2018-04",gifted2:"2018-09",legion3:"2019-06",sm67:"1967-09",sm81:"1981-09",im94:"1994-09",ff94a:"1994-09",smtas:"1994-11",hulk96:"1996-09",ssurf:"1998-02",avuta:"1999-10",xmevo:"2000-11",smnas:"2003-07",ffwgh:"2006-09",specsm:"2008-03",wxm:"2009-01",imaa:"2009-04",shsq:"2009-09",avemh:"2010-09",anime:"2010-10",usm:"2012-04",avass:"2013-05",smash:"2013-08",gotgan:"2015-09",msm17:"2017-08",modok:"2021-05",spidey:"2021-08",hitm:"2021-11",moongirl:"2023-02",ua1:"2006-02",ua2:"2006-08",iim:"2007-01",dsss:"2007-08",nextav:"2008-09",hulkvs:"2009-01",phulk:"2010-02",thortoa:"2011-05",imrt:"2013-04",hunited:"2013-12",avconf:"2014-03",cunited:"2014-07",m616:"2020-11",assembled:"2021-03",im1:"2008-05",hulk:"2008-06",xm1:"2000-07",sm1:"2002-05",xm2:"2003-05",sm2:"2004-06",ff05:"2005-07",xm3:"2006-05",sm3:"2007-05",ff07:"2007-06",
     xmo:"2009-05",im2:"2010-05",thor1:"2011-05",xmfc:"2011-06",cap1:"2011-07",avg1:"2012-05",asm1:"2012-07",im3:"2013-05",wolv:"2013-07",thor2:"2013-11",
     cap2:"2014-04",asm2:"2014-04",dofp:"2014-05",gotg1:"2014-08",dd1:"2015-04",aou:"2015-05",antman:"2015-07",ff15:"2015-08",jj1:"2015-11",
     dp1:"2016-02",dd2:"2016-03",cw:"2016-05",apoc:"2016-05",lc1:"2016-09",drs:"2016-11",logan:"2017-03",if1:"2017-03",gotg2:"2017-05",hc:"2017-07",def:"2017-08",rag:"2017-11",pu1:"2017-11",
@@ -658,7 +811,7 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
     ["2013", ["thor2","os5","aos1","wolv"]],
     ["2014", ["cap2","gotg1","groot1","groot2","gotg2","asm2","aos2"]],
     ["2015", ["aou","antman","dd1","jj1","ff15","aos3"]],
-    ["2016", ["cw","tthor","bw","bp","hc","drs","dd2","lc1","if1","dp1","aos4"]],
+    ["2016", ["cw","tthor","bw","bp","hc","drs","dd2","lc1","if1","dp1","aos4","sling"]],
     ["2017", ["rag","def","pu1","jj2","nmut","inh","run1"]],
     ["2018", ["amw","iw","lc2","if2","dd3","pu2","jj3","dp2","ven1","itsv","aos5","cd1","run2"]],
     ["2019", ["aos6","aos7","cd2","run3"], "Agents of S.H.I.E.L.D. ignore le claquement de Thanos et part dans sa propre direction."],
@@ -672,9 +825,9 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
     ["2027", ["bnw","tbolts","wonder","ba2","olk","bnd"]],
     ["2028", ["fffs"], "Les 4 Fantastiques de Terre-828 arrivent dans le MCU environ 14 mois après Thunderbolts*."],
     ["2029", ["logan"], "Logan se passe dans un futur de l'univers Fox."],
-    ["Hors chronologie", ["loki1","loki2","wi1","wi2","wi3","mz","yfns","xm97","xm972","noir"], "La TVA hors du temps, les univers alternatifs et les histoires du multivers."]
+    ["Hors chronologie", ["legends","xtas","loki1","loki2","wi1","wi2","wi3","mz","yfns","xm97","xm972","noir"], "La TVA hors du temps, les univers alternatifs et les histoires du multivers."]
   ];
-  var UNIV = {xmfc:"Fox",dofp:"Fox",xmo:"Fox",apoc:"Fox",dphx:"Fox",xm1:"Fox",xm2:"Fox",xm3:"Fox",wolv:"Fox",nmut:"Fox",logan:"Fox",dp1:"Fox",dp2:"Fox",ff05:"Fox",ff07:"Fox",ff15:"Fox",
+  var UNIV = {xtas:"Autre univers",sling:"ABC",htd:"Autre studio",pun89:"Autre studio",cap90:"Autre studio",ff94:"Autre studio",hulk03:"Autre studio",pun04:"Autre studio",mthing:"Autre studio",gr1:"Autre studio",punwz:"Autre studio",gr2:"Autre studio",asmtv:"Télévision",ihulk:"Télévision",smjp:"Télévision",drs78:"Télévision",cap79:"Télévision",ihtv:"Télévision",genx:"Télévision",nfury:"Télévision",mutx:"Télévision",legion1:"Fox",gifted1:"Fox",legion2:"Fox",gifted2:"Fox",legion3:"Fox",sm67:"Animation",sm81:"Animation",im94:"Animation",ff94a:"Animation",smtas:"Animation",hulk96:"Animation",ssurf:"Animation",avuta:"Animation",xmevo:"Animation",smnas:"Animation",ffwgh:"Animation",specsm:"Animation",wxm:"Animation",imaa:"Animation",shsq:"Animation",avemh:"Animation",anime:"Animation",usm:"Animation",avass:"Animation",smash:"Animation",gotgan:"Animation",msm17:"Animation",modok:"Animation",spidey:"Animation",hitm:"Animation",moongirl:"Animation",ua1:"Animation",ua2:"Animation",iim:"Animation",dsss:"Animation",nextav:"Animation",hulkvs:"Animation",phulk:"Animation",thortoa:"Animation",imrt:"Animation",hunited:"Animation",avconf:"Animation",cunited:"Animation",m616:"Documentaire",assembled:"Documentaire",xmfc:"Fox",dofp:"Fox",xmo:"Fox",apoc:"Fox",dphx:"Fox",xm1:"Fox",xm2:"Fox",xm3:"Fox",wolv:"Fox",nmut:"Fox",logan:"Fox",dp1:"Fox",dp2:"Fox",ff05:"Fox",ff07:"Fox",ff15:"Fox",
     sm1:"Sam Raimi",sm2:"Sam Raimi",sm3:"Sam Raimi",asm1:"Marc Webb",asm2:"Marc Webb",
     mweb:"Sony",ven1:"Sony",ven2:"Sony",morb:"Sony",krav:"Sony",ven3:"Sony",itsv:"Spider-Verse",atsv:"Spider-Verse",
     dd1:"Netflix",dd2:"Netflix",dd3:"Netflix",jj1:"Netflix",jj2:"Netflix",jj3:"Netflix",lc1:"Netflix",lc2:"Netflix",if1:"Netflix",if2:"Netflix",def:"Netflix",pu1:"Netflix",pu2:"Netflix",
@@ -683,7 +836,7 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
     aos1:"ABC",aos2:"ABC",aos3:"ABC",aos4:"ABC",aos5:"ABC",aos6:"ABC",aos7:"ABC",ac1:"ABC",ac2:"ABC",inh:"ABC",
     run1:"Hulu",run2:"Hulu",run3:"Hulu",helst:"Hulu",cd1:"Freeform",cd2:"Freeform"};
   var ITEM = {}, PHASE = {}; BLOCKS.forEach(function(b){ b.items.forEach(function(it){ ITEM[it[0]] = it; PHASE[it[0]] = b.phase; }); });
-  var VIEW = (function(){ var v = null; try { v = localStorage.getItem("objectif-doomsday:view"); } catch (e) {} return v === "chrono" || v === "univers" ? v : "sortie"; })();
+  var VIEW = (function(){ var v = null; try { v = localStorage.getItem("objectif-doomsday:view"); } catch (e) {} return v === "chrono" || v === "univers" || v === "hors" ? v : "sortie"; })();
   function univ(id){ return UNIV[id] || "MCU"; }
   var EXTRA = '<details class="transfer"><summary>Transférer mes coches vers un autre appareil</summary><p>Les coches sont gardées dans ce navigateur. Pour les retrouver sur ton téléphone ou un autre ordi, copie ton code ici, colle-le là-bas, puis clique sur « Importer ce code ».</p><textarea id="transfer-code" rows="3" spellcheck="false" aria-label="Code de progression"></textarea><div class="tbtns"><button type="button" id="copy-code">Copier mon code</button><button type="button" id="apply-code">Importer ce code</button></div><p class="status" id="transfer-msg" aria-live="polite"></p></details>';
 
@@ -736,7 +889,7 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
         '<div><b>' + pace + '</b><span>par jour à tenir</span></div>' +
       '</div></div>';
   }
-  var UCOL = {"MCU":"var(--red)","Terre-828":"#3fa9f5","Multivers":"#c24bd1","Netflix":"#f08a24","ABC":"#16a37b","Hulu":"#16a37b","Freeform":"#16a37b","Fox":"#2f6fd6","Sam Raimi":"#7b4fd6","Marc Webb":"#7b4fd6","Sony":"#7b4fd6","Spider-Verse":"#7b4fd6","New Line":"#8a8a92","Autre univers":"#8a8a92"};
+  var UCOL = {"Autre studio":"#8a8a92","Télévision":"#e0a020","Animation":"#16a3a3","Documentaire":"#6b6b74","MCU":"var(--red)","Terre-828":"#3fa9f5","Multivers":"#c24bd1","Netflix":"#f08a24","ABC":"#16a37b","Hulu":"#16a37b","Freeform":"#16a37b","Fox":"#2f6fd6","Sam Raimi":"#7b4fd6","Marc Webb":"#7b4fd6","Sony":"#7b4fd6","Spider-Verse":"#7b4fd6","New Line":"#8a8a92","Autre univers":"#8a8a92"};
   function subline(it, withUniv){
     var parts = [];
     if (withUniv) { var u = univ(it[0]); parts.push('<span class="u" style="--uc:' + (UCOL[u] || "var(--red)") + '">' + esc(u) + "</span>"); }
@@ -814,7 +967,7 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
   }
   function sortieHTML(){
     var html = '<p class="intro">Tout, dans l’ordre de sortie au cinéma ou en streaming, tous univers confondus. Les coches sont les mêmes dans tous les onglets. Coche la case quand c’est vu ; touche le reste de la ligne pour voir ce qu’il faut avoir vu avant.</p>';
-    var ids = Object.keys(ITEM).filter(function(id){ return RELEASE[id]; }).sort(function(a, b){ return RELEASE[a] < RELEASE[b] ? -1 : RELEASE[a] > RELEASE[b] ? 1 : 0; });
+    var ids = Object.keys(ITEM).filter(function(id){ return RELEASE[id] && PHASE[id] !== "hors"; }).sort(function(a, b){ return RELEASE[a] < RELEASE[b] ? -1 : RELEASE[a] > RELEASE[b] ? 1 : 0; });
     var byYear = {}, years = [];
     ids.forEach(function(id){ var y = RELEASE[id].slice(0, 4); if (!byYear[y]) { byYear[y] = []; years.push(y); } byYear[y].push(ITEM[id]); });
     years.forEach(function(y){ html += sectionHTML(y, null, byYear[y], true, "year"); });
@@ -847,10 +1000,19 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
   function universHTML(){
     var html = '<p class="intro">Tout, regroupé par studio et par univers, puis par date de sortie. Les coches sont les mêmes dans tous les onglets. Coche la case quand c\u2019est vu ; touche le reste de la ligne pour voir ce qu\u2019il faut avoir vu avant.</p>';
     UNIVERS.forEach(function(g){
-      var items = Object.keys(ITEM).filter(function(id){ return g[1].indexOf(univ(id)) >= 0; }).sort(byRelease).map(function(id){ return ITEM[id]; });
+      var items = Object.keys(ITEM).filter(function(id){ return PHASE[id] !== "hors" && g[1].indexOf(univ(id)) >= 0; }).sort(byRelease).map(function(id){ return ITEM[id]; });
       if (items.length) html += sectionHTML(g[0], g[2], items, false);
     });
     html += '<button type="button" class="cinema" data-info="doomsday" aria-haspopup="dialog"><strong>Avengers: Doomsday</strong><span>16/12/2026 · au cinéma · ce qu\u2019il faut avoir vu \u24D8</span></button>';
+    return html;
+  }
+  function horsHTML(){
+    var html = '<p class="intro">Les adaptations Marvel sans aucun lien avec le MCU ni avec Doomsday : d\u2019autres studios, la télé d\u2019avant 2008 et l\u2019animation. À regarder pour la culture, quand tu veux. Les coches sont les mêmes dans tous les onglets.</p>';
+    BLOCKS.forEach(function(b){
+      if (b.phase !== "hors") return;
+      var items = b.items.map(function(it){ return it[0]; }).sort(byRelease).map(function(id){ return ITEM[id]; });
+      html += sectionHTML(b.name, b.note, items, true);
+    });
     return html;
   }
   function render(){
@@ -859,11 +1021,12 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
         '<button type="button" role="tab" id="tab-sortie" data-view="sortie" aria-selected="' + (VIEW === "sortie") + '">Ordre de sortie</button>' +
         '<button type="button" role="tab" id="tab-chrono" data-view="chrono" aria-selected="' + (VIEW === "chrono") + '">Chronologie des événements</button>' +
         '<button type="button" role="tab" id="tab-univers" data-view="univers" aria-selected="' + (VIEW === "univers") + '">Par univers</button>' +
+        '<button type="button" role="tab" id="tab-hors" data-view="hors" aria-selected="' + (VIEW === "hors") + '">Hors MCU</button>' +
       '</div>' +
       '<div class="toolbar"><div class="toggles"><label class="toggle" for="hide-seen"><input type="checkbox" id="hide-seen"' + (hideSeen ? " checked" : "") + '> Masquer ce qui est vu</label>' +
         '<label class="toggle" for="hide-why"><input type="checkbox" id="hide-why"' + (hideWhy ? " checked" : "") + '> Masquer les notes (anti-spoil)</label></div>' +
         '<span class="status" id="status" aria-live="polite"></span></div>' +
-      (VIEW === "chrono" ? chronoHTML() : VIEW === "univers" ? universHTML() : sortieHTML()) + EXTRA;
+      (VIEW === "chrono" ? chronoHTML() : VIEW === "univers" ? universHTML() : VIEW === "hors" ? horsHTML() : sortieHTML()) + EXTRA;
     app.innerHTML = html;
     app.classList.toggle("no-why", hideWhy);
   }
