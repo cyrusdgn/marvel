@@ -54,6 +54,18 @@ h1{font-family:var(--f-display);font-weight:400;font-size:clamp(48px,11vw,88px);
 .nums span{font-size:12.5px}
 @media (max-width:560px){.hud{grid-template-columns:auto auto;justify-content:start}.nums{grid-column:1/-1}}
 
+.search{position:relative;display:flex;align-items:center}
+.search input{width:100%;font:inherit;font-size:16px;padding:12px 46px 12px 46px;border:3px solid var(--edge);border-radius:4px;background:var(--surface);color:var(--ink);box-shadow:4px 4px 0 var(--shadow);-webkit-appearance:none;appearance:none}
+.search input::placeholder{color:var(--muted)}
+.search input::-webkit-search-cancel-button{display:none}
+.search input:focus{outline:3px solid var(--yellow);outline-offset:2px}
+.search .lens{position:absolute;left:15px;top:50%;width:16px;height:16px;margin-top:-10px;border:3px solid var(--ink);border-radius:50%;pointer-events:none}
+.search .lens::after{content:"";position:absolute;width:3px;height:9px;background:var(--ink);right:-6px;bottom:-8px;transform:rotate(-45deg);border-radius:2px}
+.search .sx{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:2px solid var(--edge);border-radius:50%;background:var(--yellow);color:var(--on-yellow);font-size:14px;line-height:1;cursor:pointer}
+.search .sx:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.noresult{padding:18px;border:3px dashed var(--edge);border-radius:4px;background:var(--surface)}
+.noresult p{margin:0 0 8px}
+#list{display:flex;flex-direction:column;gap:24px}
 .toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
 .toggles{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .clear{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px}
@@ -1118,6 +1130,54 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
     if (step === 1) { var y = document.getElementById("clear-no"); if (y) y.focus(); clearTimer = setTimeout(function(){ showClear(0); }, 8000); }
     if (step === 2) clearTimer = setTimeout(function(){ undoSet = null; showClear(0); }, 15000);
   }
+  var ALIAS = {
+    hulk:"The Incredible Hulk", cap1:"The First Avenger", thor2:"The Dark World", cap2:"The Winter Soldier", gotg1:"Guardians of the Galaxy",
+    aou:"Age of Ultron", gotg2:"Guardians of the Galaxy Vol 2", amw:"Ant-Man and the Wasp", avg1:"The Avengers",
+    ff05:"Fantastic Four", ff07:"Rise of the Silver Surfer", ff15:"Fant4stic Fantastic Four", fffs:"Les 4 Fantastiques Premiers Pas",
+    bh6:"Big Hero 6", bh6s:"Big Hero 6 The Series", hwmd:"Where Monsters Dwell", ihulk:"The Incredible Hulk", asmtv:"The Amazing Spider-Man",
+    fws:"Falcon et le Soldat de l'hiver", eternals:"Les Éternels", shangchi:"Shang-Chi et la Légende des Dix Anneaux",
+    ffh:"Spider-Man Loin de chez lui", nwh:"Spider-Man Pas de retour possible", ds2:"Doctor Strange 2 multivers de la folie",
+    thor4:"Thor Amour et tonnerre", wf:"Black Panther 2", quantum:"Ant-Man et la Guêpe Quantumania", gotg3:"Les Gardiens de la Galaxie 3",
+    ghs:"Les Gardiens de la Galaxie Joyeuses Fêtes", marvels:"Captain Marvel 2", bnw:"Captain America 4", tbolts:"Thunderbolts New Avengers",
+    xm3:"L'Affrontement final", xmfc:"X-Men Le Commencement", wolv:"Wolverine Le Combat de l'immortel", xmo:"X-Men Origins Wolverine",
+    dofp:"X-Men Days of Future Past", nmut:"Les Nouveaux Mutants", dphx:"X-Men Dark Phoenix",
+    itsv:"Spider-Man New Generation", atsv:"Spider-Man Across the Spider-Verse", asm2:"Le Destin d'un héros",
+    ven2:"Venom 2", ven3:"Venom 3", dpw:"Deadpool 3", hc:"Spider-Man Homecoming", endg:"Avengers 4", iw:"Avengers 3",
+    ba1:"Daredevil Born Again", ba2:"Daredevil Born Again", def:"Defenders", olk:"Punisher", wi1:"What If", wi2:"What If", wi3:"What If",
+    sm1:"Spider-Man 1", sm3:"Spider-Man 3", avemh:"Earth's Mightiest Heroes", avass:"Avengers Assemble"
+  };
+  function norm(t){ return String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+  var HAY = {};
+  function hay(id){
+    if (!HAY[id]) { var it = ITEM[id]; HAY[id] = " " + norm([it[1], ALIAS[id] || "", univ(id), (RELEASE[id] || "").slice(0, 4), it[2], it[4] || ""].join(" ")) + " "; }
+    return HAY[id];
+  }
+  var query = "";
+  function matches(id, q){
+    var words = norm(q).split(" ").filter(Boolean);
+    if (!words.length) return true;
+    var h = hay(id);
+    return words.every(function(w){ return h.indexOf(" " + w) >= 0 || (w.length > 2 && h.indexOf(w) >= 0); });
+  }
+  function searchHTML(){
+    var words = norm(query).split(" ").filter(Boolean);
+    function inTitle(id){ var t = " " + norm(ITEM[id][1] + " " + (ALIAS[id] || "")) + " "; return words.every(function(w){ return t.indexOf(" " + w) >= 0 || (w.length > 2 && t.indexOf(w) >= 0); }) ? 0 : 1; }
+    var ids = Object.keys(ITEM).filter(function(id){ return matches(id, query); }).sort(function(a, b){ return (inTitle(a) - inTitle(b)) || byRelease(a, b); });
+    if (!ids.length) return '<div class="noresult"><p><b>Aucun titre ne correspond à « ' + esc(query) + ' ».</b></p><p>Essaie un autre mot, le titre anglais ou français, ou une année.</p><button type="button" class="cbtn" id="search-reset">Effacer la recherche</button></div>';
+    var items = ids.map(function(id){ return ITEM[id]; }), s = sums(items);
+    return '<p class="intro">' + ids.length + (ids.length > 1 ? " résultats" : " résultat") + ' pour « ' + esc(query) + ' », dans tous les onglets, Hors MCU compris.</p>' +
+      '<section class="block results" data-ids="' + ids.join(",") + '"><header><h3>Résultats</h3><span class="meta">' + meta(items) + '</span>' +
+      '<span class="segs" aria-hidden="true">' + items.map(function(it){ return '<i' + (done.has(it[0]) ? ' class="on"' : '') + '></i>'; }).join("") + '</span></header><ul>' +
+      items.map(function(it){ return rowHTML(it, true); }).join("") + "</ul></section>";
+  }
+  function listHTML(){
+    return query ? searchHTML() : (VIEW === "chrono" ? chronoHTML() : VIEW === "univers" ? universHTML() : VIEW === "hors" ? horsHTML() : sortieHTML());
+  }
+  function renderList(){
+    var l = document.getElementById("list"); if (!l) return;
+    l.innerHTML = listHTML();
+    var x = document.getElementById("search-x"); if (x) x.hidden = !query;
+  }
   function render(){
     var html = '<section class="plate"><p class="eyebrow">Cinéma · mercredi 16 décembre</p><h1>Objectif Doomsday</h1><div id="stats">' + statsHTML() + "</div></section>" +
       '<div class="tabs" role="tablist" aria-label="Affichage de la liste">' +
@@ -1126,11 +1186,14 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
         '<button type="button" role="tab" id="tab-univers" data-view="univers" aria-selected="' + (VIEW === "univers") + '">Par univers</button>' +
         '<button type="button" role="tab" id="tab-hors" data-view="hors" aria-selected="' + (VIEW === "hors") + '">Hors MCU</button>' +
       '</div>' +
+      '<div class="search" role="search"><label class="sr" for="search">Rechercher un film ou une série</label>' +
+        '<span class="lens" aria-hidden="true"></span><input type="search" id="search" placeholder="Rechercher un film, une série, une année…" autocomplete="off" spellcheck="false" value="' + esc(query) + '">' +
+        '<button type="button" class="sx" id="search-x" aria-label="Effacer la recherche"' + (query ? "" : " hidden") + '>\u2715</button></div>' +
       '<div class="toolbar"><div class="toggles"><label class="toggle" for="hide-seen"><input type="checkbox" id="hide-seen"' + (hideSeen ? " checked" : "") + '> Masquer ce qui est vu</label>' +
         '<label class="toggle" for="hide-why"><input type="checkbox" id="hide-why"' + (hideWhy ? " checked" : "") + '> Masquer les notes (anti-spoil)</label>' +
         '<span class="clear" id="clear-zone">' + clearHTML() + '</span></div>' +
         '<span class="status" id="status" aria-live="polite"></span></div>' +
-      (VIEW === "chrono" ? chronoHTML() : VIEW === "univers" ? universHTML() : VIEW === "hors" ? horsHTML() : sortieHTML()) + EXTRA;
+      '<div id="list">' + listHTML() + '</div>' + EXTRA;
     app.innerHTML = html;
     app.classList.toggle("no-why", hideWhy);
   }
@@ -1185,11 +1248,29 @@ dialog.sheet::backdrop{background:rgba(10,10,12,.62)}
     var b = e.target.closest ? e.target.closest("[data-view]") : null;
     if (!b) return;
     var v = b.getAttribute("data-view");
-    if (v === VIEW) return;
+    if (v === VIEW && !query) return;
+    query = "";
     VIEW = v;
     try { localStorage.setItem("objectif-doomsday:view", VIEW); } catch (err) {}
     render();
     var t = document.getElementById("tab-" + VIEW); if (t) t.focus();
+  });
+  function setQuery(q, keepFocus){
+    query = q;
+    var inp = document.getElementById("search"); if (inp && inp.value !== q) inp.value = q;
+    renderList();
+    if (keepFocus && inp) inp.focus();
+  }
+  app.addEventListener("input", function(e){ if (e.target.id === "search") setQuery(e.target.value.trim() ? e.target.value : ""); });
+  app.addEventListener("keydown", function(e){ if (e.target.id === "search" && e.key === "Escape" && query) { e.preventDefault(); setQuery("", true); } });
+  app.addEventListener("click", function(e){
+    var id = e.target && e.target.id;
+    if (id === "search-x" || id === "search-reset") setQuery("", true);
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "/" && !e.ctrlKey && !e.metaKey && !e.altKey && !/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName || "") && !document.querySelector("dialog[open]")) {
+      var inp = document.getElementById("search"); if (inp) { e.preventDefault(); inp.focus(); inp.select(); }
+    }
   });
   render();
   if (!storageOk) setStatus("nostore");
